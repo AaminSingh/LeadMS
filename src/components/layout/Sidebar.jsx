@@ -29,11 +29,11 @@ function Sidebar({ isOpen = false, onClose }) {
       >
         <div className="flex h-16 items-center justify-between border-b border-gray-200 px-6">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white font-black text-sm">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-[#0B192C] to-slate-900 border border-cyan-500/40 text-cyan-400 font-black text-sm shadow-xs">
               L
             </div>
             <h1 className="text-xl font-bold text-gray-900 tracking-tight">
-              Lead<span className="text-blue-600">MS</span>
+              Lead<span className="text-cyan-600">MS</span>
             </h1>
           </div>
 
@@ -54,7 +54,7 @@ function Sidebar({ isOpen = false, onClose }) {
               onClick={onClose}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${isActive
-                  ? 'bg-blue-50 text-blue-700 font-semibold shadow-2xs'
+                  ? 'bg-cyan-500/10 text-cyan-900 font-bold border-l-4 border-cyan-600 shadow-2xs'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`
               }

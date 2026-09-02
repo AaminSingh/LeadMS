@@ -92,7 +92,7 @@ function AdminPage() {
             <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-500">Total Users</span>
-                <div className="rounded-lg bg-blue-50 p-2.5 text-blue-600">
+                <div className="rounded-lg bg-cyan-50 p-2.5 text-cyan-600">
                   <Users size={20} />
                 </div>
               </div>

@@ -38,7 +38,12 @@ function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-lg">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">LeadMS</h1>
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0B192C] to-slate-900 border border-cyan-500/40 text-cyan-400 font-black text-2xl shadow-md shadow-cyan-500/10 mb-3">
+            L
+          </div>
+          <h1 className="text-3xl font-extrabold text-gray-900">
+            Lead<span className="text-cyan-600">MS</span>
+          </h1>
           <p className="mt-2 text-sm text-gray-500">
             Sign in to your account
           </p>
@@ -114,19 +119,19 @@ function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+            className="w-full rounded-lg bg-gradient-to-r from-cyan-600 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-cyan-600/20 transition-all hover:from-cyan-500 hover:to-teal-500 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           >
             {isSubmitting ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
         <p className="text-center text-sm text-gray-500">
-          Don&apos;t have an account?{' '}
+          Don't have an account?{' '}
           <Link
             to="/register"
-            className="font-medium text-blue-600 hover:text-blue-500"
+            className="font-semibold text-cyan-600 hover:text-cyan-500"
           >
-            Create one
+            Register
           </Link>
         </p>
       </div>

@@ -152,7 +152,7 @@ function LeadFormModal({ isOpen, onClose, onSuccess }) {
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
+              className="rounded-lg bg-gradient-to-r from-cyan-600 to-teal-600 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-cyan-600/20 transition-all hover:from-cyan-500 hover:to-teal-500 disabled:opacity-50 cursor-pointer"
             >
               {submitting ? 'Creating...' : 'Create Lead'}
             </button>

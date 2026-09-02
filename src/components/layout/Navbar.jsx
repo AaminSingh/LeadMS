@@ -34,10 +34,10 @@ function Navbar({ onToggleSidebar }) {
         </button>
 
         <h1 className="text-xl font-bold text-gray-900 lg:hidden flex items-center gap-1.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white font-black text-sm">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-tr from-[#0B192C] to-slate-900 border border-cyan-500/40 text-cyan-400 font-black text-sm shadow-xs">
             L
           </span>
-          LeadMS
+          Lead<span className="text-cyan-600">MS</span>
         </h1>
       </div>
 
@@ -48,7 +48,7 @@ function Navbar({ onToggleSidebar }) {
               {user.name || user.email}
             </span>
             {user.role && (
-              <span className="ml-2 rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-xs font-semibold text-blue-700 uppercase tracking-wider">
+              <span className="ml-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 px-2.5 py-0.5 text-xs font-bold text-cyan-900 uppercase tracking-wider">
                 {user.role}
               </span>
             )}

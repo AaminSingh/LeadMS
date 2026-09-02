@@ -65,7 +65,7 @@ function LeadsPage() {
 
           <button
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 cursor-pointer"
+            className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-600 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-cyan-600/20 transition-all hover:from-cyan-500 hover:to-teal-500 cursor-pointer"
           >
             <Plus size={18} />
             New Lead
@@ -90,7 +90,7 @@ function LeadsPage() {
           </div>
         ) : leads.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 mb-3">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600 mb-3">
               <FileText size={24} />
             </div>
             <h3 className="text-base font-semibold text-gray-900">No Leads in Pipeline</h3>
@@ -99,7 +99,7 @@ function LeadsPage() {
             </p>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-cyan-600 to-teal-600 px-4 py-2 text-xs font-semibold text-white shadow-sm shadow-cyan-600/20 transition-all hover:from-cyan-500 hover:to-teal-500 cursor-pointer"
             >
               <Plus size={14} /> Add First Lead
             </button>

@@ -158,7 +158,7 @@ function PricingProfile() {
           <button
             type="submit"
             disabled={saving}
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-600 to-teal-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-cyan-600/20 transition-all hover:from-cyan-500 hover:to-teal-500 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           >
             <Save size={16} />
             {saving ? 'Saving...' : 'Save Profile'}
@@ -266,7 +266,7 @@ function VendorCatalog() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`px-6 py-3 text-sm font-medium transition-colors cursor-pointer ${activeTab === tab.key
-              ? 'border-b-2 border-blue-600 text-blue-600'
+              ? 'border-b-2 border-cyan-600 text-cyan-700 font-bold'
               : 'text-gray-500 hover:text-gray-700'
               }`}
           >
@@ -308,7 +308,7 @@ function VendorCatalog() {
               </>
             ) : (
               <>
-                <PackageCheck className="mx-auto h-12 w-12 text-blue-500 mb-3" />
+                <PackageCheck className="mx-auto h-12 w-12 text-cyan-600 mb-3" />
                 <h4 className="text-base font-semibold text-gray-900">
                   Your Sales Catalog is Empty
                 </h4>
@@ -344,7 +344,7 @@ function VendorCatalog() {
                     <button
                       onClick={() => handleLock(product)}
                       disabled={actionLoading === productId}
-                      className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
+                      className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-600 to-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-cyan-600/20 transition-all hover:from-cyan-500 hover:to-teal-500 disabled:opacity-50 cursor-pointer"
                     >
                       <Lock size={14} />
                       {actionLoading === productId
@@ -489,7 +489,7 @@ function TraderCatalog() {
         <h2 className="text-lg font-semibold text-gray-900">My Products</h2>
         <button
           onClick={openCreateModal}
-          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 cursor-pointer"
+          className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-600 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-cyan-600/20 transition-all hover:from-cyan-500 hover:to-teal-500 cursor-pointer"
         >
           <Plus size={16} />
           Create Product
@@ -511,7 +511,7 @@ function TraderCatalog() {
             </p>
             <button
               onClick={openCreateModal}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-cyan-600 to-teal-600 px-4 py-2 text-xs font-semibold text-white shadow-sm shadow-cyan-600/20 transition-all hover:from-cyan-500 hover:to-teal-500 cursor-pointer"
             >
               <Plus size={14} /> Create First Product
             </button>
@@ -693,7 +693,7 @@ function TraderCatalog() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+                className="w-full rounded-lg bg-gradient-to-r from-cyan-600 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-cyan-600/20 transition-all hover:from-cyan-500 hover:to-teal-500 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
               >
                 {submitting
                   ? editingProduct
