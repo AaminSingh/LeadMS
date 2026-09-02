@@ -2,9 +2,11 @@ import axios from 'axios'
 import useAuthStore from '../store/useAuthStore'
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-})
-
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://leadms.onrender.com/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 // Attach Bearer token to every outgoing request if available
 apiClient.interceptors.request.use(
   (config) => {
