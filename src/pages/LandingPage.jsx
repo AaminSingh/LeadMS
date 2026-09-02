@@ -31,17 +31,17 @@ function LandingPage() {
   const [activeRoleTab, setActiveRoleTab] = useState('vendor')
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
       {/* ────────────────── TOP ANNOUNCEMENT BAR ────────────────── */}
-      <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 px-4 py-2 text-center text-xs font-medium text-white sm:text-sm">
+      <div className="bg-[#07111F] border-b border-cyan-500/15 px-4 py-2 text-center text-xs font-medium text-slate-300 sm:text-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-center gap-2">
-          <span className="rounded-full bg-white/20 px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-blue-100">
+          <span className="rounded-full bg-cyan-500/15 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-cyan-400 border border-cyan-500/30">
             v2.4 Release
           </span>
           <span>New: Automated Quoting Math Engine with One-Click Product Locking.</span>
           <Link
             to={isAuthenticated ? '/app/products' : '/register'}
-            className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 hover:text-blue-100 transition-colors"
+            className="inline-flex items-center gap-1 font-semibold text-cyan-400 underline underline-offset-2 hover:text-cyan-300 transition-colors"
           >
             Explore now <ArrowRight size={13} />
           </Link>
@@ -53,12 +53,12 @@ function LandingPage() {
         <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6 lg:px-8">
           {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-black text-xl shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0B192C] to-slate-900 border border-cyan-500/40 text-cyan-400 font-black text-xl shadow-md shadow-cyan-500/10 group-hover:scale-105 transition-transform">
               L
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-extrabold tracking-tight text-slate-900 leading-tight">
-                Lead<span className="text-blue-600">MS</span>
+                Lead<span className="text-cyan-600">MS</span>
               </span>
               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 -mt-0.5">
                 Enterprise CRM
@@ -68,16 +68,16 @@ function LandingPage() {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
-            <a href="#features" className="hover:text-blue-600 transition-colors">
+            <a href="#features" className="hover:text-cyan-600 transition-colors">
               Platform Features
             </a>
-            <a href="#collaboration" className="hover:text-blue-600 transition-colors">
+            <a href="#collaboration" className="hover:text-cyan-600 transition-colors">
               B2B Network
             </a>
-            <a href="#roles" className="hover:text-blue-600 transition-colors">
+            <a href="#roles" className="hover:text-cyan-600 transition-colors">
               Role Architecture
             </a>
-            <a href="#metrics" className="hover:text-blue-600 transition-colors">
+            <a href="#metrics" className="hover:text-cyan-600 transition-colors">
               Performance
             </a>
           </nav>
@@ -87,9 +87,9 @@ function LandingPage() {
             {isAuthenticated ? (
               <Link
                 to="/app/dashboard"
-                className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 hover:shadow-md cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-slate-900 to-[#0B192C] px-5 py-2.5 text-sm font-semibold text-white border border-cyan-500/30 shadow-sm transition-all hover:border-cyan-400 hover:shadow-cyan-500/10 cursor-pointer"
               >
-                Go to Workspace <ArrowRight size={16} />
+                Go to Workspace <ArrowRight size={16} className="text-cyan-400" />
               </Link>
             ) : (
               <>
@@ -101,7 +101,7 @@ function LandingPage() {
                 </Link>
                 <Link
                   to="/register"
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-cyan-500/20 transition-all hover:from-cyan-500 hover:to-teal-500 hover:shadow-lg cursor-pointer"
                 >
                   Start Free Trial <ChevronRight size={16} />
                 </Link>
@@ -112,23 +112,23 @@ function LandingPage() {
       </header>
 
       <main>
-        {/* ────────────────── 2-COLUMN HERO SECTION (BITRIX / SALESFORCE INSPIRED) ────────────────── */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-blue-50/40 to-white pt-16 pb-24 lg:pt-20 lg:pb-32">
+        {/* ────────────────── 2-COLUMN HERO SECTION ────────────────── */}
+        <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-cyan-50/20 to-white pt-16 pb-24 lg:pt-20 lg:pb-32">
           {/* Ambient Glow Orbs */}
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-gradient-to-tr from-blue-400/20 via-indigo-300/20 to-purple-400/20 blur-3xl pointer-events-none rounded-full" />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-gradient-to-tr from-cyan-400/15 via-sky-300/15 to-indigo-500/10 blur-3xl pointer-events-none rounded-full" />
 
           <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
               {/* Left Column: Value Prop & CTAs */}
               <div className="lg:col-span-6 space-y-6 text-left">
-                <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-4 py-1.5 text-xs font-bold text-blue-700 shadow-xs backdrop-blur-sm">
-                  <Sparkles size={14} className="text-blue-600" />
+                <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 text-xs font-bold text-cyan-900 shadow-xs backdrop-blur-sm">
+                  <Sparkles size={14} className="text-cyan-600" />
                   <span>Next-Generation B2B Sales Ecosystem</span>
                 </div>
 
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.1]">
                   Connect Traders, Lock Catalogs, &{' '}
-                  <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-slate-950 via-cyan-600 to-teal-500 bg-clip-text text-transparent">
                     Close B2B Deals Faster
                   </span>
                 </h1>
@@ -143,7 +143,7 @@ function LandingPage() {
                 <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
                   <Link
                     to={isAuthenticated ? '/app/dashboard' : '/register'}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-7 py-3.5 text-base font-bold text-white shadow-lg shadow-blue-600/25 transition-all hover:bg-blue-700 hover:shadow-xl hover:-translate-y-0.5"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 px-7 py-3.5 text-base font-bold text-white shadow-lg shadow-cyan-600/25 transition-all hover:from-cyan-500 hover:to-teal-500 hover:shadow-xl hover:-translate-y-0.5"
                   >
                     Start Free Trial <ArrowRight size={18} />
                   </Link>
@@ -151,7 +151,7 @@ function LandingPage() {
                     to={isAuthenticated ? '/app/leads' : '/login'}
                     className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-700 shadow-xs transition-all hover:bg-slate-50 hover:text-slate-900 hover:border-slate-400"
                   >
-                    <Play size={16} className="text-blue-600 fill-blue-600" />
+                    <Play size={16} className="text-cyan-600 fill-cyan-600" />
                     Explore Live Pipeline
                   </Link>
                 </div>
@@ -160,13 +160,13 @@ function LandingPage() {
                 <div className="pt-4 border-t border-slate-200/80 flex flex-wrap items-center gap-6 text-xs text-slate-500">
                   <div className="flex items-center gap-1.5">
                     <div className="flex -space-x-2">
-                      <div className="h-8 w-8 rounded-full bg-blue-500 border-2 border-white flex items-center justify-center font-bold text-[10px] text-white">
+                      <div className="h-8 w-8 rounded-full bg-cyan-600 border-2 border-white flex items-center justify-center font-bold text-[10px] text-white">
                         SK
                       </div>
-                      <div className="h-8 w-8 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center font-bold text-[10px] text-white">
+                      <div className="h-8 w-8 rounded-full bg-[#0B192C] border-2 border-white flex items-center justify-center font-bold text-[10px] text-cyan-400">
                         MR
                       </div>
-                      <div className="h-8 w-8 rounded-full bg-purple-500 border-2 border-white flex items-center justify-center font-bold text-[10px] text-white">
+                      <div className="h-8 w-8 rounded-full bg-teal-600 border-2 border-white flex items-center justify-center font-bold text-[10px] text-white">
                         DL
                       </div>
                     </div>
@@ -191,10 +191,10 @@ function LandingPage() {
               <div className="lg:col-span-6 relative">
                 <div className="relative mx-auto max-w-lg lg:max-w-none">
                   {/* Decorative Gradient Backdrop */}
-                  <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-blue-600/30 to-indigo-600/30 blur-2xl opacity-60" />
+                  <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-cyan-500/20 to-sky-600/20 blur-2xl opacity-60" />
 
                   {/* Main Product Screenshot Window */}
-                  <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-2xl transition-all duration-300 hover:shadow-blue-500/10">
+                  <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-2xl transition-all duration-300 hover:shadow-cyan-500/10">
                     <div className="flex h-9 items-center gap-2 border-b border-slate-200 bg-slate-100/90 px-4">
                       <div className="flex gap-1.5">
                         <div className="h-3 w-3 rounded-full bg-red-400" />
@@ -214,7 +214,7 @@ function LandingPage() {
 
                   {/* Floating Micro-Card 1: Quoting Breakdown */}
                   <div className="absolute -bottom-6 -left-6 hidden sm:flex items-center gap-3 rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-xl backdrop-blur-md">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600">
                       <TrendingUp size={22} />
                     </div>
                     <div>
@@ -222,14 +222,14 @@ function LandingPage() {
                         Live Quote Calculated
                       </div>
                       <div className="text-base font-black text-slate-900">
-                        $45,000 <span className="text-xs font-semibold text-emerald-600">(+18.5% Margin)</span>
+                        $45,000 <span className="text-xs font-semibold text-cyan-600">(+18.5% Margin)</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Floating Micro-Card 2: Locked Catalog Badge */}
                   <div className="absolute -top-4 -right-4 hidden sm:flex items-center gap-2.5 rounded-2xl border border-slate-200/90 bg-white/95 px-4 py-3 shadow-xl backdrop-blur-md">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0B192C] text-cyan-400">
                       <Lock size={16} />
                     </div>
                     <div className="text-xs font-bold text-slate-800">
@@ -354,7 +354,7 @@ function LandingPage() {
         <section id="features" className="py-24 bg-white border-t border-slate-200">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3.5 py-1 text-xs font-bold text-blue-700 mb-3">
+              <div className="inline-flex items-center gap-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 px-3.5 py-1 text-xs font-bold text-cyan-900 mb-3">
                 Comprehensive B2B Architecture
               </div>
               <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
@@ -367,9 +367,9 @@ function LandingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Feature 1 */}
-              <div className="rounded-3xl border border-slate-200 bg-slate-50/50 p-8 shadow-xs hover:shadow-xl hover:border-blue-300 hover:bg-white transition-all duration-300 flex flex-col justify-between">
+              <div className="rounded-3xl border border-slate-200 bg-slate-50/50 p-8 shadow-xs hover:shadow-xl hover:border-cyan-300 hover:bg-white transition-all duration-300 flex flex-col justify-between">
                 <div>
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white mb-6 shadow-md shadow-blue-500/20">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-600 text-white mb-6 shadow-md shadow-cyan-500/25">
                     <Lock size={26} />
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-2.5">
@@ -380,15 +380,15 @@ function LandingPage() {
                     it becomes instantly accessible in the Quoting modal while isolating sensitive supplier pricing.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-slate-200/80 flex items-center gap-2 text-xs font-bold text-blue-600">
-                  <Check size={14} className="text-emerald-500" /> Atomic $addToSet & $pull logic
+                <div className="mt-6 pt-4 border-t border-slate-200/80 flex items-center gap-2 text-xs font-bold text-cyan-700">
+                  <Check size={14} className="text-cyan-600" /> Atomic $addToSet & $pull logic
                 </div>
               </div>
 
               {/* Feature 2 */}
-              <div className="rounded-3xl border border-slate-200 bg-slate-50/50 p-8 shadow-xs hover:shadow-xl hover:border-indigo-300 hover:bg-white transition-all duration-300 flex flex-col justify-between">
+              <div className="rounded-3xl border border-slate-200 bg-slate-50/50 p-8 shadow-xs hover:shadow-xl hover:border-slate-800 hover:bg-white transition-all duration-300 flex flex-col justify-between">
                 <div>
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 text-white mb-6 shadow-md shadow-indigo-500/20">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0B192C] text-cyan-400 mb-6 border border-cyan-500/20 shadow-md shadow-slate-900/20">
                     <Calculator size={26} />
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-2.5">
@@ -399,15 +399,15 @@ function LandingPage() {
                     vendor margins, and fee markups in real-time as quantities or SKUs change.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-slate-200/80 flex items-center gap-2 text-xs font-bold text-indigo-600">
-                  <Check size={14} className="text-emerald-500" /> Real-time interactive recalculations
+                <div className="mt-6 pt-4 border-t border-slate-200/80 flex items-center gap-2 text-xs font-bold text-slate-800">
+                  <Check size={14} className="text-cyan-600" /> Real-time interactive recalculations
                 </div>
               </div>
 
               {/* Feature 3 */}
-              <div className="rounded-3xl border border-slate-200 bg-slate-50/50 p-8 shadow-xs hover:shadow-xl hover:border-purple-300 hover:bg-white transition-all duration-300 flex flex-col justify-between">
+              <div className="rounded-3xl border border-slate-200 bg-slate-50/50 p-8 shadow-xs hover:shadow-xl hover:border-teal-300 hover:bg-white transition-all duration-300 flex flex-col justify-between">
                 <div>
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-600 text-white mb-6 shadow-md shadow-purple-500/20">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 text-white mb-6 shadow-md shadow-teal-500/25">
                     <FileSpreadsheet size={26} />
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-2.5">
@@ -418,8 +418,8 @@ function LandingPage() {
                     team assignment delegation and status badge visual clarity.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-slate-200/80 flex items-center gap-2 text-xs font-bold text-purple-600">
-                  <Check size={14} className="text-emerald-500" /> Automated status progression
+                <div className="mt-6 pt-4 border-t border-slate-200/80 flex items-center gap-2 text-xs font-bold text-teal-700">
+                  <Check size={14} className="text-teal-600" /> Automated status progression
                 </div>
               </div>
             </div>
@@ -430,7 +430,7 @@ function LandingPage() {
         <section id="roles" className="py-24 bg-slate-50 border-t border-slate-200">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-2">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-cyan-700 mb-2">
                 Multi-Tenant Governance
               </h2>
               <p className="text-3xl sm:text-4xl font-black text-slate-900">
@@ -455,7 +455,7 @@ function LandingPage() {
                     onClick={() => setActiveRoleTab(tab.id)}
                     className={`rounded-xl px-5 py-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                       activeRoleTab === tab.id
-                        ? 'bg-blue-600 text-white shadow-sm'
+                        ? 'bg-gradient-to-r from-slate-900 to-[#0B192C] text-cyan-400 border border-cyan-500/30 shadow-sm'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                   >
@@ -665,41 +665,41 @@ function LandingPage() {
         </section>
 
         {/* ────────────────── METRICS & PERFORMANCE BANNER ────────────────── */}
-        <section id="metrics" className="py-20 bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-800 text-white">
+        <section id="metrics" className="py-20 bg-gradient-to-r from-[#050D18] via-[#0B192C] to-[#050D18] text-white border-y border-cyan-500/20">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-white/15">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-cyan-500/15">
               <div className="pt-4 md:pt-0">
-                <div className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-1">
+                <div className="text-4xl sm:text-5xl font-black tracking-tight text-cyan-400 mb-1">
                   3.8x
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-blue-200">
+                <div className="text-xs sm:text-sm font-medium text-cyan-200/80">
                   Faster Quote Generation
                 </div>
               </div>
 
               <div className="pt-4 md:pt-0">
-                <div className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-1">
+                <div className="text-4xl sm:text-5xl font-black tracking-tight text-cyan-400 mb-1">
                   $18.5M+
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-blue-200">
+                <div className="text-xs sm:text-sm font-medium text-cyan-200/80">
                   Total Quoted Value
                 </div>
               </div>
 
               <div className="pt-4 md:pt-0">
-                <div className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-1">
+                <div className="text-4xl sm:text-5xl font-black tracking-tight text-cyan-400 mb-1">
                   99.98%
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-blue-200">
+                <div className="text-xs sm:text-sm font-medium text-cyan-200/80">
                   Uptime Reliability SLA
                 </div>
               </div>
 
               <div className="pt-4 md:pt-0">
-                <div className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-1">
+                <div className="text-4xl sm:text-5xl font-black tracking-tight text-cyan-400 mb-1">
                   100%
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-blue-200">
+                <div className="text-xs sm:text-sm font-medium text-cyan-200/80">
                   Role Data Isolation
                 </div>
               </div>
@@ -710,9 +710,9 @@ function LandingPage() {
         {/* ────────────────── CONVERSION CTA BANNER ────────────────── */}
         <section className="py-24 bg-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-tr from-slate-900 via-indigo-950 to-blue-900 px-8 py-16 sm:p-20 text-center shadow-2xl">
-              <div className="absolute top-0 right-0 -mt-10 -mr-10 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-72 w-72 rounded-full bg-purple-500/20 blur-3xl pointer-events-none" />
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-tr from-[#050D18] via-[#0B192C] to-slate-900 border border-cyan-500/20 px-8 py-16 sm:p-20 text-center shadow-2xl">
+              <div className="absolute top-0 right-0 -mt-10 -mr-10 h-72 w-72 rounded-full bg-cyan-500/15 blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-72 w-72 rounded-full bg-teal-500/15 blur-3xl pointer-events-none" />
 
               <h2 className="relative text-3xl sm:text-5xl font-black text-white tracking-tight max-w-3xl mx-auto">
                 Ready to Accelerate Your B2B Distribution & Quoting?
@@ -726,7 +726,7 @@ function LandingPage() {
               <div className="relative mt-8 flex flex-col sm:flex-row justify-center gap-4">
                 <Link
                   to="/register"
-                  className="rounded-xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg transition-all hover:bg-blue-500 hover:shadow-blue-500/25 cursor-pointer"
+                  className="rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 px-8 py-4 text-base font-bold text-slate-950 shadow-lg shadow-cyan-500/25 transition-all hover:from-cyan-400 hover:to-teal-400 cursor-pointer"
                 >
                   Create Your Free Account
                 </Link>
@@ -738,7 +738,7 @@ function LandingPage() {
                 </Link>
               </div>
 
-              <div className="relative mt-6 text-xs text-slate-400">
+              <div className="relative mt-6 text-xs text-cyan-300/70">
                 Immediate access • No software download needed • Full API capability
               </div>
             </div>
@@ -753,11 +753,11 @@ function LandingPage() {
             {/* Col 1 */}
             <div className="col-span-2 space-y-4">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-sm">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-[#0B192C] to-slate-900 border border-cyan-500/30 text-cyan-400 font-bold text-sm">
                   L
                 </div>
                 <span className="text-lg font-black text-slate-900 tracking-tight">
-                  Lead<span className="text-blue-600">MS</span>
+                  Lead<span className="text-cyan-600">MS</span>
                 </span>
               </div>
               <p className="text-xs text-slate-500 max-w-sm leading-relaxed">
