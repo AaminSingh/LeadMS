@@ -53,9 +53,11 @@ function LandingPage() {
         <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6 lg:px-8">
           {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0B192C] to-slate-900 border border-cyan-500/40 text-cyan-400 font-black text-xl shadow-md shadow-cyan-500/10 group-hover:scale-105 transition-transform">
-              L
-            </div>
+            <img
+              src="/leadms_logo.jpg"
+              alt="LeadMS"
+              className="h-10 w-10 rounded-xl object-cover shadow-md border border-slate-200 group-hover:scale-105 transition-transform"
+            />
             <div className="flex flex-col">
               <span className="text-xl font-extrabold tracking-tight text-slate-900 leading-tight">
                 Lead<span className="text-cyan-600">MS</span>
@@ -222,7 +224,7 @@ function LandingPage() {
                         Live Quote Calculated
                       </div>
                       <div className="text-base font-black text-slate-900">
-                        $45,000 <span className="text-xs font-semibold text-cyan-600">(+18.5% Margin)</span>
+                        ₹45,000 <span className="text-xs font-semibold text-cyan-600">(+18.5% Margin)</span>
                       </div>
                     </div>
                   </div>
@@ -502,19 +504,19 @@ function LandingPage() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-600">Base Equipment Cost:</span>
-                      <span className="font-bold text-slate-900">$10,000</span>
+                      <span className="font-bold text-slate-900">₹10,000</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-600">Applied Margin (+20%):</span>
-                      <span className="font-bold text-emerald-600">+$2,000</span>
+                      <span className="font-bold text-emerald-600">+₹2,000</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-600">Installation & Misc:</span>
-                      <span className="font-bold text-slate-900">+$1,500</span>
+                      <span className="font-bold text-slate-900">+₹1,500</span>
                     </div>
                     <div className="pt-3 border-t border-slate-200 flex justify-between text-base font-black">
                       <span>Total Client Quote:</span>
-                      <span className="text-blue-600">$13,500</span>
+                      <span className="text-blue-600">₹13,500</span>
                     </div>
                   </div>
                 </div>
@@ -753,9 +755,11 @@ function LandingPage() {
             {/* Col 1 */}
             <div className="col-span-2 space-y-4">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-[#0B192C] to-slate-900 border border-cyan-500/30 text-cyan-400 font-bold text-sm">
-                  L
-                </div>
+                <img
+                  src="/leadms_logo.jpg"
+                  alt="LeadMS"
+                  className="h-8 w-8 rounded-lg object-cover shadow-xs border border-slate-200"
+                />
                 <span className="text-lg font-black text-slate-900 tracking-tight">
                   Lead<span className="text-cyan-600">MS</span>
                 </span>

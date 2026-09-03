@@ -21,6 +21,26 @@ const leadService = {
     })
   },
 
+  updateLead(id, data) {
+    const name = data.customerName || data.clientName
+    const email = data.customerEmail || data.email
+    const phone = data.customerPhone || data.phone
+
+    return apiClient.put(`/leads/${id}`, {
+      customerName: name,
+      clientName: name,
+      customerEmail: email,
+      email: email,
+      customerPhone: phone,
+      phone: phone,
+      requirement: data.requirement,
+    })
+  },
+
+  deleteLead(id) {
+    return apiClient.delete(`/leads/${id}`)
+  },
+
   assignLead(leadId, teamMemberId) {
     return apiClient.put(`/leads/${leadId}/assign`, { teamMemberId })
   },

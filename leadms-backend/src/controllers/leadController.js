@@ -122,3 +122,87 @@ export const generateQuote = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateLead = async (req, res, next) => {
+  try {
+    const lead = await Lead.findById(req.params.id);
+    if (!lead) {
+      return res.status(404).json({ message: 'Lead not found' });
+    }
+
+    // Verify ownership
+    if (req.user.role === 'team-member') {
+      const isAssigned = lead.assignedTo && lead.assignedTo.toString() === req.user._id.toString();
+      const isCreator = lead.createdBy && lead.createdBy.toString() === req.user._id.toString();
+      if (!isAssigned && !isCreator) {
+        return res.status(403).json({ message: 'Not authorized for this lead' });
+      }
+    } else if (req.user.role === 'vendor') {
+      const vendorIdStr = lead.vendorId?._id ? lead.vendorId._id.toString() : (lead.vendorId ? lead.vendorId.toString() : null);
+      if (vendorIdStr && vendorIdStr !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Not authorized for this lead' });
+      }
+    }
+
+    const {
+      customerName,
+      clientName,
+      customerEmail,
+      email,
+      customerPhone,
+      phone,
+      requirement,
+      status
+    } = req.body;
+
+    if (customerName !== undefined || clientName !== undefined) {
+      lead.customerName = customerName || clientName;
+    }
+    if (customerEmail !== undefined || email !== undefined) {
+      lead.customerEmail = customerEmail !== undefined ? customerEmail : email;
+    }
+    if (customerPhone !== undefined || phone !== undefined) {
+      lead.customerPhone = customerPhone !== undefined ? customerPhone : phone;
+    }
+    if (requirement !== undefined) {
+      lead.requirement = requirement;
+    }
+    if (status !== undefined) {
+      lead.status = status;
+    }
+
+    await lead.save();
+    res.status(200).json(lead);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteLead = async (req, res, next) => {
+  try {
+    const lead = await Lead.findById(req.params.id);
+    if (!lead) {
+      return res.status(404).json({ message: 'Lead not found' });
+    }
+
+    // Verify ownership
+    if (req.user.role === 'team-member') {
+      const isAssigned = lead.assignedTo && lead.assignedTo.toString() === req.user._id.toString();
+      const isCreator = lead.createdBy && lead.createdBy.toString() === req.user._id.toString();
+      if (!isAssigned && !isCreator) {
+        return res.status(403).json({ message: 'Not authorized for this lead' });
+      }
+    } else if (req.user.role === 'vendor') {
+      const vendorIdStr = lead.vendorId?._id ? lead.vendorId._id.toString() : (lead.vendorId ? lead.vendorId.toString() : null);
+      if (vendorIdStr && vendorIdStr !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Not authorized for this lead' });
+      }
+    }
+
+    await Lead.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: 'Lead deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+

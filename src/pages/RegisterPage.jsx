@@ -40,9 +40,11 @@ function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-lg">
         <div className="text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-tr from-[#0B192C] to-slate-900 border border-cyan-500/40 text-cyan-400 font-black text-2xl shadow-md shadow-cyan-500/10 mb-3">
-            L
-          </div>
+          <img
+            src="/leadms_logo.jpg"
+            alt="LeadMS"
+            className="mx-auto h-14 w-14 rounded-2xl object-cover shadow-md border border-gray-200 mb-3"
+          />
           <h1 className="text-3xl font-extrabold text-gray-900">
             Lead<span className="text-cyan-600">MS</span>
           </h1>

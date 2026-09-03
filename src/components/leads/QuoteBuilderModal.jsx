@@ -181,7 +181,7 @@ function QuoteBuilderModal({ lead, isOpen, onClose, onSuccess }) {
                       const pid = p._id || p.id
                       return (
                         <option key={pid} value={pid}>
-                          {p.name} — ${p.basePrice} ({p.category})
+                          {p.name} — ₹{Number(p.basePrice).toLocaleString('en-IN')} ({p.category})
                         </option>
                       )
                     })}
@@ -223,7 +223,7 @@ function QuoteBuilderModal({ lead, isOpen, onClose, onSuccess }) {
               <div className="flex justify-between text-gray-600">
                 <span>Base Products Total:</span>
                 <span className="font-medium text-gray-900">
-                  ${totals.baseTotal.toFixed(2)}
+                  ₹{totals.baseTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
 
@@ -232,28 +232,28 @@ function QuoteBuilderModal({ lead, isOpen, onClose, onSuccess }) {
                   Margin ({vendorProfile.marginPercentage || 0}%):
                 </span>
                 <span className="font-medium text-gray-900">
-                  +${totals.marginAmount.toFixed(2)}
+                  +₹{totals.marginAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
 
               <div className="flex justify-between text-gray-600">
                 <span>Installation Price:</span>
                 <span className="font-medium text-gray-900">
-                  +${totals.installationPrice.toFixed(2)}
+                  +₹{totals.installationPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
 
               <div className="flex justify-between text-gray-600">
                 <span>Misc Charges:</span>
                 <span className="font-medium text-gray-900">
-                  +${totals.miscCharges.toFixed(2)}
+                  +₹{totals.miscCharges.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
 
               <div className="border-t border-gray-200 pt-2 flex justify-between font-bold text-base text-gray-900">
                 <span>Final Quotation Total:</span>
                 <span className="text-purple-600">
-                  ${totals.finalTotal.toFixed(2)}
+                  ₹{totals.finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             </div>

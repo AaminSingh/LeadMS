@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
-import { Plus, FileText, RefreshCw } from 'lucide-react'
+import { Plus, FileText, RefreshCw, Pencil, Trash2 } from 'lucide-react'
+import toast from 'react-hot-toast'
 import leadService from '../services/leadService'
 import Badge from '../components/common/Badge'
 import LeadFormModal from '../components/leads/LeadFormModal'
@@ -10,6 +11,8 @@ function LeadsPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingLead, setEditingLead] = useState(null)
+  const [deletingId, setDeletingId] = useState(null)
 
   // Quote builder modal state
   const [quoteLeadItem, setQuoteLeadItem] = useState(null)
@@ -32,6 +35,41 @@ function LeadsPage() {
   useEffect(() => {
     fetchLeads()
   }, [fetchLeads])
+
+  const handleOpenCreateModal = () => {
+    setEditingLead(null)
+    setIsModalOpen(true)
+  }
+
+  const handleOpenEditModal = (lead) => {
+    setEditingLead(lead)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setEditingLead(null)
+  }
+
+  const handleDeleteLead = async (lead) => {
+    const leadId = lead._id || lead.id
+    const name = lead.clientName || lead.customerName || 'this lead'
+    if (!window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
+      return
+    }
+
+    try {
+      setDeletingId(leadId)
+      await leadService.deleteLead(leadId)
+      toast.success('Lead deleted successfully!')
+      await fetchLeads()
+    } catch (err) {
+      console.error('Failed to delete lead:', err)
+      toast.error(err.response?.data?.message || 'Failed to delete lead.')
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   const handleOpenQuoteModal = (lead) => {
     setQuoteLeadItem(lead)
@@ -64,8 +102,8 @@ function LeadsPage() {
           </button>
 
           <button
-            onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-600 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-cyan-600/20 transition-all hover:from-cyan-500 hover:to-teal-500 cursor-pointer"
+            onClick={handleOpenCreateModal}
+            className="btn-theme-gradient inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold shadow-xs cursor-pointer"
           >
             <Plus size={18} />
             New Lead
@@ -75,13 +113,13 @@ function LeadsPage() {
 
       {/* Error alert */}
       {error && (
-        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-600">
+        <div className="rounded-xl bg-red-50 p-4 text-sm text-red-600 border border-red-100">
           {error}
         </div>
       )}
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xs">
         {loading && leads.length === 0 ? (
           <div className="p-8 space-y-3">
             {[1, 2, 3].map((n) => (
@@ -90,7 +128,7 @@ function LeadsPage() {
           </div>
         ) : leads.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600 mb-3">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-theme-subtle text-theme mb-3 border border-theme">
               <FileText size={24} />
             </div>
             <h3 className="text-base font-semibold text-gray-900">No Leads in Pipeline</h3>
@@ -98,8 +136,8 @@ function LeadsPage() {
               You haven't captured any client inquiries yet. Create your first lead to generate automated proposals!
             </p>
             <button
-              onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-cyan-600 to-teal-600 px-4 py-2 text-xs font-semibold text-white shadow-sm shadow-cyan-600/20 transition-all hover:from-cyan-500 hover:to-teal-500 cursor-pointer"
+              onClick={handleOpenCreateModal}
+              className="btn-theme-gradient inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold shadow-xs cursor-pointer"
             >
               <Plus size={14} /> Add First Lead
             </button>
@@ -145,16 +183,41 @@ function LeadsPage() {
 
                       <td className="px-6 py-4">
                         <Badge status={lead.status} />
+                        {lead.quote?.finalTotal ? (
+                          <div className="mt-1 text-xs font-bold text-gray-900">
+                            ₹{Number(lead.quote.finalTotal).toLocaleString('en-IN')}
+                          </div>
+                        ) : null}
                       </td>
 
                       <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={() => handleOpenQuoteModal(lead)}
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-purple-200 bg-purple-50 px-3 py-1.5 text-xs font-semibold text-purple-700 transition-colors hover:bg-purple-100 cursor-pointer"
-                        >
-                          <FileText size={14} />
-                          Generate Quote
-                        </button>
+                        <div className="inline-flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleOpenQuoteModal(lead)}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-purple-200 bg-purple-50 px-2.5 py-1.5 text-xs font-semibold text-purple-700 transition-colors hover:bg-purple-100 cursor-pointer"
+                            title="Generate Quote"
+                          >
+                            <FileText size={13} />
+                            Generate Quote
+                          </button>
+                          <button
+                            onClick={() => handleOpenEditModal(lead)}
+                            className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 cursor-pointer"
+                            title="Edit Lead"
+                          >
+                            <Pencil size={13} />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteLead(lead)}
+                            disabled={deletingId === leadId}
+                            className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-white px-2.5 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50 cursor-pointer"
+                            title="Delete Lead"
+                          >
+                            <Trash2 size={13} />
+                            {deletingId === leadId ? 'Deleting...' : 'Delete'}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )
@@ -165,11 +228,12 @@ function LeadsPage() {
         )}
       </div>
 
-      {/* New Lead Modal */}
+      {/* Lead Form Modal (Create / Edit) */}
       <LeadFormModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleCloseModal}
         onSuccess={fetchLeads}
+        leadToEdit={editingLead}
       />
 
       {/* Quote Builder Modal */}

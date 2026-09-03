@@ -2,7 +2,7 @@ import axios from 'axios'
 import useAuthStore from '../store/useAuthStore'
 
 const apiClient = axios.create({
-  baseURL: 'https://leadms.onrender.com/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -36,7 +36,7 @@ apiClient.interceptors.response.use(
         try {
           // Use plain axios to avoid interceptor loops
           const { data } = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL}/auth/refresh-token`,
+            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/auth/refresh-token`,
             { refreshToken }
           )
 

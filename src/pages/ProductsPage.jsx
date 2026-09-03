@@ -112,12 +112,12 @@ function PricingProfile() {
 
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Fixed Installation Price
+            Fixed Installation Price (₹)
           </label>
           <input
             type="number"
             step="any"
-            placeholder="e.g. 100"
+            placeholder="e.g. 5000"
             className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 ${errors.installationPrice ? 'border-red-400' : 'border-gray-300'
               }`}
             {...register('installationPrice', {
@@ -134,12 +134,12 @@ function PricingProfile() {
 
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Misc Charges
+            Misc Charges (₹)
           </label>
           <input
             type="number"
             step="any"
-            placeholder="e.g. 50"
+            placeholder="e.g. 1500"
             className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 ${errors.miscCharges ? 'border-red-400' : 'border-gray-300'
               }`}
             {...register('miscCharges', {
@@ -337,7 +337,7 @@ function VendorCatalog() {
                     {product.description}
                   </p>
                   <p className="mt-3 text-lg font-bold text-gray-900">
-                    ${product.basePrice}
+                    ₹{Number(product.basePrice).toLocaleString('en-IN')}
                   </p>
 
                   {activeTab === 'available' ? (
@@ -550,8 +550,8 @@ function TraderCatalog() {
                       <td className="px-6 py-4 text-gray-600">
                         {product.category}
                       </td>
-                      <td className="px-6 py-4 text-gray-900">
-                        ${product.basePrice}
+                      <td className="px-6 py-4 font-semibold text-gray-900">
+                        ₹{Number(product.basePrice).toLocaleString('en-IN')}
                       </td>
                       <td className="px-6 py-4 text-gray-500 max-w-xs truncate">
                         {product.description}
@@ -630,12 +630,12 @@ function TraderCatalog() {
 
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                  Base Price
+                  Base Price (₹)
                 </label>
                 <input
                   type="number"
                   step="any"
-                  placeholder="e.g. 250"
+                  placeholder="e.g. 25000"
                   className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 ${errors.basePrice ? 'border-red-400' : 'border-gray-300'
                     }`}
                   {...register('basePrice', {

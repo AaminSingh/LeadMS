@@ -144,7 +144,7 @@ function AdminPage() {
               </div>
               <div className="mt-4">
                 <span className="text-3xl font-bold text-gray-900">
-                  ${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  ₹{totalRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
               <p className="mt-3 text-xs text-gray-500">
@@ -162,7 +162,7 @@ function AdminPage() {
               </div>
               <div className="mt-4">
                 <span className="text-3xl font-bold text-gray-900">
-                  ${expectedMargin.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  ₹{expectedMargin.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
               <p className="mt-3 text-xs text-gray-500">

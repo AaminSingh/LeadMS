@@ -39,15 +39,38 @@ export const getAnalytics = async (req, res, next) => {
     const totalProducts = await Product.countDocuments();
     const activeProducts = await Product.countDocuments({ isActive: true });
 
-    // 4. Revenue / Quoted Analytics
-    const quotedLeads = await Lead.find({ status: { $in: ['quoted', 'accepted'] } });
+    // 4. Revenue / Quoted Analytics directly from database records
+    const quotedLeads = await Lead.find({
+      $or: [
+        { status: { $in: ['quoted', 'accepted'] } },
+        { 'quote.finalTotal': { $gt: 0 } }
+      ]
+    });
+
     let totalQuotedRevenue = 0;
     let totalExpectedMargin = 0;
-    
-    quotedLeads.forEach(lead => {
-      if (lead.quote) {
-        totalQuotedRevenue += (lead.quote.finalTotal || 0);
-        totalExpectedMargin += (lead.quote.marginApplied || 0);
+    let totalInvoicedAmount = 0;
+    let totalInvoicesCount = 0;
+    let outstandingAmount = 0;
+    let outstandingCount = 0;
+    let paidAmount = 0;
+    let paidCount = 0;
+
+    quotedLeads.forEach((lead) => {
+      if (lead.quote && (lead.quote.finalTotal || 0) > 0) {
+        const amt = Number(lead.quote.finalTotal || 0);
+        totalInvoicedAmount += amt;
+        totalInvoicesCount += 1;
+        totalQuotedRevenue += amt;
+        totalExpectedMargin += Number(lead.quote.marginApplied || 0);
+
+        if (lead.status === 'accepted') {
+          paidAmount += amt;
+          paidCount += 1;
+        } else {
+          outstandingAmount += amt;
+          outstandingCount += 1;
+        }
       }
     });
 
@@ -63,7 +86,13 @@ export const getAnalytics = async (req, res, next) => {
       },
       revenue: {
         totalQuoted: totalQuotedRevenue,
-        totalExpectedMargin
+        totalExpectedMargin,
+        totalInvoicedAmount,
+        totalInvoicesCount,
+        outstandingAmount,
+        outstandingCount,
+        paidAmount,
+        paidCount
       }
     });
   } catch (error) {

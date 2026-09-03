@@ -10,6 +10,7 @@ import { Toaster } from 'react-hot-toast'
 import LeadsPage from './pages/LeadsPage'
 import AdminPage from './pages/AdminPage'
 import LandingPage from './pages/LandingPage'
+import SettingsPage from './pages/SettingsPage'
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="leads" element={<LeadsPage />} />
             <Route path="products" element={<ProductsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
 
             {/* Admin only route */}
             <Route element={<RoleGuard allowedRoles={['admin']} />}>
