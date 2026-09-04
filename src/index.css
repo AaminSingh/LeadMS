@@ -181,3 +181,141 @@
 .dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
   border-color: #1f2937;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   SILICON-VALLEY SAAS & STRIPE-INSPIRED STYLING EXTENSIONS
+   ───────────────────────────────────────────────────────────── */
+
+/* Organic Mesh Gradient Animations */
+@keyframes mesh-drift-1 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(45px, -35px) scale(1.08) rotate(12deg);
+  }
+  66% {
+    transform: translate(-30px, 25px) scale(0.95) rotate(-8deg);
+  }
+}
+
+@keyframes mesh-drift-2 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(-40px, 30px) scale(1.12) rotate(-15deg);
+  }
+  66% {
+    transform: translate(35px, -20px) scale(0.92) rotate(10deg);
+  }
+}
+
+@keyframes mesh-drift-3 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(25px, 40px) scale(1.15);
+  }
+}
+
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes radar-ping {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.6);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 14px rgba(6, 182, 212, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
+  }
+}
+
+.animate-mesh-1 {
+  animation: mesh-drift-1 18s ease-in-out infinite alternate;
+}
+
+.animate-mesh-2 {
+  animation: mesh-drift-2 22s ease-in-out infinite alternate;
+}
+
+.animate-mesh-3 {
+  animation: mesh-drift-3 15s ease-in-out infinite alternate;
+}
+
+.animate-flow-line {
+  animation: flow-dash 1.4s linear infinite;
+}
+
+.animate-radar {
+  animation: radar-ping 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 4s ease-in-out infinite;
+}
+
+/* Silicon-Valley SaaS Card & Border Glows */
+.saas-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 10px 30px -10px rgba(15, 23, 42, 0.05);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.saas-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 35px -12px rgba(6, 182, 212, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04);
+  border-color: rgba(6, 182, 212, 0.35);
+}
+
+.saas-card-dark {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(11, 15, 25, 0.95) 100%);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.saas-card-dark:hover {
+  border-color: rgba(34, 211, 238, 0.45);
+  box-shadow: 0 20px 40px -10px rgba(6, 182, 212, 0.18);
+}
+
+/* Custom Scrollbar for Code Snippets */
+.code-scroll::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.code-scroll::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+.code-scroll::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+.code-scroll::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
