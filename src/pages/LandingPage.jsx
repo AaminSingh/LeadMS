@@ -301,10 +301,10 @@ function LandingPage() {
               className="h-10 w-10 rounded-xl object-cover shadow-sm border border-slate-200 group-hover:scale-105 transition-transform"
             />
             <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tight leading-tight">
+              <span className="text-xl font-display font-black tracking-tight leading-tight">
                 Lead<span className="text-blue-600">MS</span>
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 -mt-0.5">
+              <span className="text-[10px] font-display font-bold uppercase tracking-widest text-slate-400 -mt-0.5">
                 Enterprise CRM
               </span>
             </div>
@@ -312,7 +312,7 @@ function LandingPage() {
 
           {/* Desktop Navigation Links */}
           <nav
-            className={`hidden md:flex items-center gap-8 text-sm font-semibold ${
+            className={`hidden md:flex items-center gap-8 text-[13px] font-sans font-medium tracking-wide ${
               isDark ? 'text-slate-400' : 'text-slate-600'
             }`}
           >
@@ -370,7 +370,7 @@ function LandingPage() {
             {isAuthenticated ? (
               <Link
                 to="/app/dashboard"
-                className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all cursor-pointer shadow-sm ${
+                className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-display font-semibold tracking-tight transition-all cursor-pointer shadow-sm ${
                   isDark
                     ? 'bg-white text-slate-950 hover:bg-slate-100'
                     : 'bg-slate-900 text-white hover:bg-slate-800'
@@ -382,7 +382,7 @@ function LandingPage() {
               <>
                 <Link
                   to="/login"
-                  className={`hidden sm:inline-block rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors ${
+                  className={`hidden sm:inline-block rounded-xl px-3.5 py-2 text-[13px] font-sans font-medium tracking-wide transition-colors ${
                     isDark
                       ? 'text-slate-300 hover:bg-slate-800 hover:text-white'
                       : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
@@ -392,7 +392,7 @@ function LandingPage() {
                 </Link>
                 <Link
                   to="/register"
-                  className={`inline-flex items-center gap-1.5 rounded-xl px-4.5 py-2.5 text-sm font-semibold transition-all cursor-pointer shadow-sm ${
+                  className={`inline-flex items-center gap-1.5 rounded-xl px-4.5 py-2.5 text-sm font-display font-semibold tracking-tight transition-all cursor-pointer shadow-sm ${
                     isDark
                       ? 'bg-blue-600 hover:bg-blue-500 text-white'
                       : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/15'
@@ -406,7 +406,7 @@ function LandingPage() {
         </div>
       </header>
 
-      <main className="flex-1">
+      <main className="flex-1 font-sans">
         {/* ────────────────── 1. HERO SECTION WITH ANIMATED WORKFLOW VIDEO ────────────────── */}
         <section
           className={`relative overflow-hidden pt-16 pb-24 lg:pt-24 lg:pb-32 transition-colors ${
@@ -424,31 +424,25 @@ function LandingPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
               {/* Left Column: Value Prop & CTAs */}
               <div className="lg:col-span-6 space-y-6 text-left z-10">
-                <div
-                  className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
-                    isDark
-                      ? 'bg-blue-950/60 border border-blue-800/60 text-blue-300'
-                      : 'bg-blue-50 border border-blue-200 text-blue-700'
-                  }`}
-                >
-                  <Sparkles size={13} className={isDark ? 'text-blue-400' : 'text-blue-600'} />
-                  <span>Enterprise B2B Distribution & Quoting</span>
+                <div>
+                  <p className="text-xs font-semibold tracking-widest uppercase text-blue-600 dark:text-blue-400 mb-2">
+                    Enterprise B2B Distribution & Quoting
+                  </p>
+                  {/* Main Headline */}
+                  <h1
+                    className={`text-4xl sm:text-5xl lg:text-6xl font-display font-black tracking-[-0.02em] leading-[1.05] ${
+                      isDark ? 'text-white' : 'text-slate-900'
+                    }`}
+                  >
+                    Connect Traders, Lock Catalogs, &{' '}
+                    <span className={`inline ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>
+                      Automate Commercial Deals
+                    </span>
+                  </h1>
                 </div>
 
-                {/* Main Headline */}
-                <h1
-                  className={`text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.15] ${
-                    isDark ? 'text-white' : 'text-slate-900'
-                  }`}
-                >
-                  Connect Traders, Lock Catalogs, &{' '}
-                  <span className={isDark ? 'text-blue-400' : 'text-blue-600'}>
-                    Automate Commercial Deals
-                  </span>
-                </h1>
-
                 <p
-                  className={`text-base sm:text-lg leading-relaxed max-w-xl ${
+                  className={`text-base sm:text-lg font-sans leading-relaxed max-w-xl ${
                     isDark ? 'text-slate-400' : 'text-slate-600'
                   }`}
                 >
@@ -461,7 +455,7 @@ function LandingPage() {
                 <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
                   <Link
                     to={isAuthenticated ? '/app/dashboard' : '/register'}
-                    className={`inline-flex items-center justify-center gap-2 rounded-xl px-7 py-3.5 text-base font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-md ${
+                    className={`inline-flex items-center justify-center gap-2 rounded-xl px-7 py-3.5 text-base font-display font-semibold tracking-tight transition-all hover:-translate-y-0.5 cursor-pointer shadow-md ${
                       isDark
                         ? 'bg-blue-600 text-white hover:bg-blue-500 shadow-blue-500/20'
                         : 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/25'
@@ -471,7 +465,7 @@ function LandingPage() {
                   </Link>
                   <a
                     href="#simulator"
-                    className={`inline-flex items-center justify-center gap-2 rounded-xl border px-6 py-3.5 text-base font-medium shadow-2xs transition-all ${
+                    className={`inline-flex items-center justify-center gap-2 rounded-xl border px-6 py-3.5 text-base font-display font-medium tracking-tight shadow-2xs transition-all ${
                       isDark
                         ? 'border-slate-800 bg-slate-900/80 hover:bg-slate-800 text-slate-200'
                         : 'border-slate-300 bg-white hover:bg-slate-50 text-slate-700'
@@ -652,25 +646,18 @@ function LandingPage() {
           <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
             {/* Section Heading */}
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <div
-                className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-semibold mb-3 ${
-                  isDark
-                    ? 'bg-blue-950/60 border border-blue-800/60 text-blue-300'
-                    : 'bg-blue-50 border border-blue-200 text-blue-700'
-                }`}
-              >
-                <Calculator size={13} />
-                <span>Live Quoting & Pricing Engine</span>
-              </div>
+              <p className="text-xs font-semibold tracking-widest uppercase text-blue-600 dark:text-blue-400 mb-2">
+                Live Margin Math & Quoting
+              </p>
               <h2
-                className={`text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight ${
+                className={`text-3xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight leading-[1.1] ${
                   isDark ? 'text-white' : 'text-slate-900'
                 }`}
               >
                 Instant Quote Building with Live Margin Math
               </h2>
               <p
-                className={`mt-4 text-base sm:text-lg ${
+                className={`mt-4 text-base sm:text-lg font-sans leading-relaxed ${
                   isDark ? 'text-slate-400' : 'text-slate-600'
                 }`}
               >
@@ -700,13 +687,13 @@ function LandingPage() {
                         <Calculator size={22} />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold flex items-center gap-2">
+                        <h3 className="text-xl font-display font-bold flex items-center gap-2">
                           Live Quote Calculator Widget
                           <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800">
                             Real-Time Math
                           </span>
                         </h3>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs font-sans leading-relaxed text-slate-500">
                           Click products, tune margins, and witness zero-latency Indian Rupee calculations.
                         </p>
                       </div>
@@ -930,7 +917,7 @@ function LandingPage() {
 
                     <button
                       onClick={() => setQuoteDispatched(true)}
-                      className={`w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm ${
+                      className={`w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-display font-semibold tracking-tight transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm ${
                         quoteDispatched
                           ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
                           : isDark
@@ -968,8 +955,8 @@ function LandingPage() {
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold mb-2">One-Click Catalog Locking</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed mb-5">
+                  <h3 className="text-lg font-display font-bold mb-2">One-Click Catalog Locking</h3>
+                  <p className="text-xs font-sans text-slate-500 leading-relaxed mb-5">
                     Vendors lock wholesale supplier inventory into private catalogs with one click, shielding raw
                     purchase costs from retail leads and competitors.
                   </p>
@@ -1007,7 +994,7 @@ function LandingPage() {
 
                     <button
                       onClick={() => setIsDemoProductLocked(!isDemoProductLocked)}
-                      className={`w-full py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all border shadow-2xs ${
+                      className={`w-full py-2.5 rounded-xl text-xs font-display font-semibold tracking-tight flex items-center justify-center gap-2 cursor-pointer transition-all border shadow-2xs ${
                         isDemoProductLocked
                           ? isDark
                             ? 'bg-rose-950/50 border-rose-800 text-rose-300 hover:bg-rose-900/60'
@@ -1052,8 +1039,8 @@ function LandingPage() {
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold mb-2">Zero Margin Leakage</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                  <h3 className="text-lg font-display font-bold mb-2">Zero Margin Leakage</h3>
+                  <p className="text-xs font-sans text-slate-500 leading-relaxed mb-4">
                     Sales reps generate quotes without seeing the supplier base price. Wholesale margins stay 100%
                     confidential between the vendor owner and supplier.
                   </p>
@@ -1103,8 +1090,8 @@ function LandingPage() {
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold mb-2">Automated Pipeline Funnel</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                  <h3 className="text-lg font-display font-bold mb-2">Automated Pipeline Funnel</h3>
+                  <p className="text-xs font-sans text-slate-500 leading-relaxed mb-4">
                     Deals automatically advance from <span className="font-semibold text-blue-600">New</span> to{' '}
                     <span className="font-semibold text-emerald-600">Quoted</span> upon proposal generation, keeping sales teams
                     synchronized in real time.
@@ -1164,8 +1151,8 @@ function LandingPage() {
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold mb-2">Instant Proposal Delivery</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                  <h3 className="text-lg font-display font-bold mb-2">Instant Proposal Delivery</h3>
+                  <p className="text-xs font-sans text-slate-500 leading-relaxed mb-4">
                     Deliver branded, itemized quotation summaries directly to prospective clients with one click,
                     logging delivery timestamps into your verified audit history.
                   </p>
@@ -1200,24 +1187,17 @@ function LandingPage() {
         >
           <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <div
-                className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-semibold mb-3 ${
-                  isDark
-                    ? 'bg-blue-950/60 border border-blue-800/60 text-blue-300'
-                    : 'bg-blue-50 border border-blue-200 text-blue-700'
-                }`}
-              >
-                <Workflow size={13} />
-                <span>Feature 2: Product Orchestration Walkthrough</span>
-              </div>
+              <p className="text-xs font-semibold tracking-widest uppercase text-blue-600 dark:text-blue-400 mb-2">
+                Product Orchestration
+              </p>
               <h2
-                className={`text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight ${
+                className={`text-3xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight leading-[1.1] ${
                   isDark ? 'text-white' : 'text-slate-900'
                 }`}
               >
                 How LeadMS Eliminates B2B Friction
               </h2>
-              <p className={`mt-4 text-base sm:text-lg ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              <p className={`mt-4 text-base sm:text-lg font-sans leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                 Observe the seamless 3-stage lifecycle from initial wholesale catalog publication to locked margin
                 isolation and instant client proposal generation.
               </p>
@@ -1248,7 +1228,7 @@ function LandingPage() {
                           : 'hover:opacity-100 opacity-60 border border-transparent'
                       }`}
                     >
-                      <div className="text-xs sm:text-sm font-bold flex items-center gap-1.5">
+                      <div className="text-xs sm:text-sm font-display font-bold flex items-center gap-1.5">
                         <span
                           className={`h-2 w-2 rounded-full ${
                             activeStep === item.step ? 'bg-blue-600' : 'bg-slate-400'
@@ -1256,7 +1236,7 @@ function LandingPage() {
                         />
                         {item.title}
                       </div>
-                      <div className="text-[11px] text-slate-400 hidden sm:block mt-0.5">{item.sub}</div>
+                      <div className="text-[11px] font-sans text-slate-400 hidden sm:block mt-0.5">{item.sub}</div>
 
                       {/* Animated Progress Bar for the active step */}
                       {activeStep === item.step && isPlaying && (
@@ -1281,8 +1261,8 @@ function LandingPage() {
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950/60 dark:border-amber-800 dark:text-amber-300">
                         <Package size={13} /> Stage 01: Supplier Inventory
                       </span>
-                      <h3 className="text-2xl sm:text-3xl font-black">Wholesale Trader Publishes Inventory</h3>
-                      <p className={`text-sm leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                      <h3 className="text-2xl sm:text-3xl font-display font-black tracking-tight">Wholesale Trader Publishes Inventory</h3>
+                      <p className={`text-sm font-sans leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                         Suppliers and national manufacturers register baseline specifications, warranty tiers, bulk
                         availability, and minimum wholesale prices into the unified LeadMS database pool.
                       </p>
@@ -1363,8 +1343,8 @@ function LandingPage() {
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950/60 dark:border-blue-800 dark:text-blue-300">
                         <Lock size={13} /> Stage 02: Atomic Locking
                       </span>
-                      <h3 className="text-2xl sm:text-3xl font-black">Vendor Locks Item & Binds Margins</h3>
-                      <p className={`text-sm leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                      <h3 className="text-2xl sm:text-3xl font-display font-black tracking-tight">Vendor Locks Item & Binds Margins</h3>
+                      <p className={`text-sm font-sans leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                         Local distributors claim the item into their active sales catalog with 1-click atomic MongoDB
                         locking. The vendor's proprietary margin ruleset is automatically attached.
                       </p>
@@ -1447,8 +1427,8 @@ await VendorProfile.updateOne(
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/60 dark:border-emerald-800 dark:text-emerald-300">
                         <IndianRupee size={13} /> Stage 03: Deal Execution
                       </span>
-                      <h3 className="text-2xl sm:text-3xl font-black">Instant Itemized Quote & Dispatch</h3>
-                      <p className={`text-sm leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                      <h3 className="text-2xl sm:text-3xl font-display font-black tracking-tight">Instant Itemized Quote & Dispatch</h3>
+                      <p className={`text-sm font-sans leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                         Sales reps select the locked item for their assigned lead, automatically calculating installation
                         fees and taxes. An itemized proposal in Indian Rupees is generated and dispatched.
                       </p>
@@ -1534,7 +1514,7 @@ await VendorProfile.updateOne(
               >
                 <button
                   onClick={() => setIsPlaying(!isPlaying)}
-                  className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 text-xs font-display font-semibold tracking-tight text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
                 >
                   {isPlaying ? (
                     <>
@@ -1551,7 +1531,7 @@ await VendorProfile.updateOne(
                   <span className="text-xs text-slate-400 font-mono">Stage {activeStep + 1} of 3</span>
                   <button
                     onClick={() => setActiveStep((prev) => (prev + 1) % 3)}
-                    className="text-xs font-semibold px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white transition-colors cursor-pointer"
+                    className="text-xs font-display font-semibold tracking-tight px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white transition-colors cursor-pointer"
                   >
                     Next Stage →
                   </button>
@@ -1598,7 +1578,7 @@ await VendorProfile.updateOne(
                       <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                         Seamless Handshake
                       </div>
-                      <div className="text-sm font-extrabold">Wholesale Trader ↔ Local Vendor Alignment</div>
+                      <div className="text-sm font-display font-extrabold">Wholesale Trader ↔ Local Vendor Alignment</div>
                     </div>
                     <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-bold text-emerald-700 dark:bg-emerald-950 dark:border-emerald-800 dark:text-emerald-400">
                       Zero Friction
@@ -1609,25 +1589,20 @@ await VendorProfile.updateOne(
 
               {/* Right Content Side */}
               <div className="lg:col-span-6 order-1 lg:order-2 space-y-6">
-                <div
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold ${
-                    isDark
-                      ? 'bg-blue-950/60 border border-blue-800/60 text-blue-300'
-                      : 'bg-blue-50 border border-blue-200 text-blue-700'
-                  }`}
-                >
-                  <Zap size={13} /> Bridge The Wholesale Gap
+                <div>
+                  <p className="text-xs font-semibold tracking-widest uppercase text-blue-600 dark:text-blue-400 mb-2">
+                    Wholesale Alignment
+                  </p>
+                  <h2
+                    className={`text-3xl sm:text-4xl font-display font-black tracking-tight leading-[1.1] ${
+                      isDark ? 'text-white' : 'text-slate-900'
+                    }`}
+                  >
+                    Stop Juggling Messy Spreadsheets & Fragmented Price Lists
+                  </h2>
                 </div>
 
-                <h2
-                  className={`text-3xl sm:text-4xl font-black tracking-tight leading-tight ${
-                    isDark ? 'text-white' : 'text-slate-900'
-                  }`}
-                >
-                  Stop Juggling Messy Spreadsheets & Fragmented Price Lists
-                </h2>
-
-                <p className={`text-base leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                <p className={`text-base font-sans leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                   Traditional B2B distribution suffers from slow pricing updates, leaked margins, and delayed customer
                   proposals. LeadMS creates a secure digital bridge where wholesale suppliers publish live product
                   inventories and distributors instantly configure custom margins to quote their clients.
@@ -1635,36 +1610,36 @@ await VendorProfile.updateOne(
 
                 <div className="space-y-4 pt-2">
                   <div className="flex gap-4">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400 font-bold border border-blue-200 dark:border-blue-900">
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400 font-display font-bold border border-blue-200 dark:border-blue-900">
                       1
                     </div>
                     <div>
-                      <h4 className="font-bold text-base">Instant Catalog Locking</h4>
-                      <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                      <h4 className="font-display font-bold text-base">Instant Catalog Locking</h4>
+                      <p className={`text-sm font-sans leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                         Vendors claim exclusive supplier items into their active sales catalog with one click.
                       </p>
                     </div>
                   </div>
 
                   <div className="flex gap-4">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400 font-bold border border-indigo-200 dark:border-indigo-900">
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400 font-display font-bold border border-indigo-200 dark:border-indigo-900">
                       2
                     </div>
                     <div>
-                      <h4 className="font-bold text-base">Configurable Pricing Profiles</h4>
-                      <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                      <h4 className="font-display font-bold text-base">Configurable Pricing Profiles</h4>
+                      <p className={`text-sm font-sans leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                         Pre-set your vendor margin %, flat installation rates, and miscellaneous charges.
                       </p>
                     </div>
                   </div>
 
                   <div className="flex gap-4">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950 dark:text-purple-400 font-bold border border-purple-200 dark:border-purple-900">
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950 dark:text-purple-400 font-display font-bold border border-purple-200 dark:border-purple-900">
                       3
                     </div>
                     <div>
-                      <h4 className="font-bold text-base">Real-Time Quoting Engine</h4>
-                      <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                      <h4 className="font-display font-bold text-base">Real-Time Quoting Engine</h4>
+                      <p className={`text-sm font-sans leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                         Generate comprehensive itemized estimates instantly and update client pipeline status.
                       </p>
                     </div>
@@ -1684,17 +1659,17 @@ await VendorProfile.updateOne(
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-2">
+              <p className="text-xs font-semibold tracking-widest uppercase text-blue-600 dark:text-blue-400 mb-2">
                 Role-Based Portals
-              </h2>
-              <p
-                className={`text-3xl sm:text-4xl font-black tracking-tight ${
+              </p>
+              <h2
+                className={`text-3xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight leading-[1.1] ${
                   isDark ? 'text-white' : 'text-slate-900'
                 }`}
               >
                 Built for Every Role Across the Wholesale Lifecycle
-              </p>
-              <p className={`mt-2 text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              </h2>
+              <p className={`mt-3 text-base font-sans leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                 Select a role below to explore customized dashboards and quoting tools designed for your workflow.
               </p>
             </div>
@@ -1715,7 +1690,7 @@ await VendorProfile.updateOne(
                   <button
                     key={tab.id}
                     onClick={() => setActiveRoleTab(tab.id)}
-                    className={`rounded-xl px-5 py-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                    className={`rounded-xl px-5 py-2.5 text-xs sm:text-sm font-display font-semibold tracking-tight transition-all cursor-pointer ${
                       activeRoleTab === tab.id
                         ? isDark
                           ? 'bg-blue-600 text-white shadow-sm'
@@ -1741,8 +1716,8 @@ await VendorProfile.updateOne(
                     <span className="inline-flex items-center rounded-lg bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-300 mb-3">
                       Role: Vendor / Commercial Contractor
                     </span>
-                    <h3 className="text-2xl font-black mb-3">Control Your Margins & Build Rapid Proposals</h3>
-                    <p className={`text-sm mb-6 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                    <h3 className="text-2xl font-display font-black tracking-tight mb-3">Control Your Margins & Build Rapid Proposals</h3>
+                    <p className={`text-sm font-sans mb-6 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                       Lock supplier goods directly to your sales catalog, set your profit margin percentages, and generate
                       professional, itemized quotes for your residential and commercial clients in seconds.
                     </p>
@@ -1800,8 +1775,8 @@ await VendorProfile.updateOne(
                     <span className="inline-flex items-center rounded-lg bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-300 mb-3">
                       Role: Wholesale Trader / Manufacturer
                     </span>
-                    <h3 className="text-2xl font-black mb-3">Expand Wholesale Distribution Across Verified Vendors</h3>
-                    <p className={`text-sm mb-6 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                    <h3 className="text-2xl font-display font-black tracking-tight mb-3">Expand Wholesale Distribution Across Verified Vendors</h3>
+                    <p className={`text-sm font-sans mb-6 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                       Publish wholesale products, manage stock specifications, and expand commercial demand across all
                       registered vendors without handling retail customer inquiries directly.
                     </p>
@@ -1859,10 +1834,10 @@ await VendorProfile.updateOne(
                     <span className="inline-flex items-center rounded-lg bg-purple-50 border border-purple-200 px-3 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-950 dark:border-purple-800 dark:text-purple-300 mb-3">
                       Role: Sales Representative / Team Member
                     </span>
-                    <h3 className="text-2xl font-black mb-3">
+                    <h3 className="text-2xl font-display font-black tracking-tight mb-3">
                       Focus on Relationships While Prices Calculate Automatically
                     </h3>
-                    <p className={`text-sm mb-6 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                    <p className={`text-sm font-sans mb-6 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                       Team members invited by vendors can manage their assigned pipeline, add client inquiries, and generate
                       quotes utilizing the vendor's locked catalog and verified pricing rules.
                     </p>
@@ -1923,8 +1898,8 @@ await VendorProfile.updateOne(
                     <span className="inline-flex items-center rounded-lg bg-slate-100 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 px-3 py-1 text-xs font-semibold mb-3">
                       Role: Platform Administrator
                     </span>
-                    <h3 className="text-2xl font-black mb-3">Total System Visibility & Financial Governance</h3>
-                    <p className={`text-sm mb-6 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                    <h3 className="text-2xl font-display font-black tracking-tight mb-3">Total System Visibility & Financial Governance</h3>
+                    <p className={`text-sm font-sans mb-6 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                       Admins enjoy complete audit access to monitor platform user growth, track overall pipeline revenue,
                       and inspect quoting profit margins across all registered companies.
                     </p>
@@ -1982,25 +1957,46 @@ await VendorProfile.updateOne(
           }`}
         >
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
+            <div className="text-center mb-10">
+              <p className="text-xs font-semibold tracking-widest uppercase text-blue-400 mb-2">
+                Platform Impact
+              </p>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-slate-800">
               <div className="pt-4 md:pt-0">
-                <div className="text-4xl sm:text-5xl font-black tracking-tight text-blue-400 mb-1">3.8x</div>
-                <div className="text-xs sm:text-sm font-medium text-slate-300">Faster Quote Turnaround</div>
+                <div className="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold tabular-nums tracking-tight text-blue-400 mb-1.5">
+                  3.8x
+                </div>
+                <div className="text-xs sm:text-sm font-sans font-medium text-slate-300">
+                  Faster Quote Turnaround
+                </div>
               </div>
 
               <div className="pt-4 md:pt-0">
-                <div className="text-4xl sm:text-5xl font-black tracking-tight text-blue-400 mb-1">₹18.5 Cr+</div>
-                <div className="text-xs sm:text-sm font-medium text-slate-300">Total Quoted Value</div>
+                <div className="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold tabular-nums tracking-tight text-blue-400 mb-1.5">
+                  ₹18.5 Cr+
+                </div>
+                <div className="text-xs sm:text-sm font-sans font-medium text-slate-300">
+                  Total Quoted Value
+                </div>
               </div>
 
               <div className="pt-4 md:pt-0">
-                <div className="text-4xl sm:text-5xl font-black tracking-tight text-blue-400 mb-1">99.98%</div>
-                <div className="text-xs sm:text-sm font-medium text-slate-300">Uptime Reliability SLA</div>
+                <div className="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold tabular-nums tracking-tight text-blue-400 mb-1.5">
+                  99.98%
+                </div>
+                <div className="text-xs sm:text-sm font-sans font-medium text-slate-300">
+                  Uptime Reliability SLA
+                </div>
               </div>
 
               <div className="pt-4 md:pt-0">
-                <div className="text-4xl sm:text-5xl font-black tracking-tight text-blue-400 mb-1">100%</div>
-                <div className="text-xs sm:text-sm font-medium text-slate-300">Confidential Margin Protection</div>
+                <div className="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold tabular-nums tracking-tight text-blue-400 mb-1.5">
+                  100%
+                </div>
+                <div className="text-xs sm:text-sm font-sans font-medium text-slate-300">
+                  Confidential Margin Protection
+                </div>
               </div>
             </div>
           </div>
@@ -2020,11 +2016,14 @@ await VendorProfile.updateOne(
                   : 'bg-slate-900 border-slate-900 text-white'
               }`}
             >
-              <h2 className="relative text-3xl sm:text-5xl font-black tracking-tight max-w-3xl mx-auto">
+              <p className="relative text-xs font-semibold tracking-widest uppercase text-blue-400 mb-3">
+                Enterprise Onboarding
+              </p>
+              <h2 className="relative text-3xl sm:text-5xl font-display font-black tracking-tight max-w-3xl mx-auto leading-[1.1]">
                 Ready to Accelerate Your B2B Distribution & Quoting?
               </h2>
 
-              <p className="relative mt-4 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto">
+              <p className="relative mt-4 text-base sm:text-lg font-sans leading-relaxed text-slate-300 max-w-2xl mx-auto">
                 Join hundreds of forward-thinking suppliers and vendors using LeadMS to lock catalog goods, automate
                 complex pricing math, and convert leads into closed deals.
               </p>
@@ -2032,19 +2031,19 @@ await VendorProfile.updateOne(
               <div className="relative mt-8 flex flex-col sm:flex-row justify-center gap-4">
                 <Link
                   to="/register"
-                  className="rounded-xl bg-blue-600 hover:bg-blue-500 px-8 py-4 text-base font-semibold text-white shadow-sm transition-all cursor-pointer"
+                  className="rounded-xl bg-blue-600 hover:bg-blue-500 px-8 py-4 text-base font-display font-semibold tracking-tight text-white shadow-sm transition-all cursor-pointer"
                 >
                   Create Your Free Account
                 </Link>
                 <Link
                   to="/login"
-                  className="rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all cursor-pointer"
+                  className="rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 px-8 py-4 text-base font-display font-semibold tracking-tight text-white backdrop-blur-sm transition-all cursor-pointer"
                 >
                   Sign In to Workspace
                 </Link>
               </div>
 
-              <div className="relative mt-6 text-xs text-slate-400">
+              <div className="relative mt-6 text-xs font-sans text-slate-400">
                 Immediate access • No credit card required • Instant Team Onboarding
               </div>
             </div>
@@ -2070,25 +2069,25 @@ await VendorProfile.updateOne(
                   alt="LeadMS"
                   className="h-8 w-8 rounded-lg object-cover shadow-2xs border border-slate-200"
                 />
-                <span className="text-lg font-black tracking-tight">
+                <span className="text-lg font-display font-black tracking-tight">
                   Lead<span className="text-blue-600">MS</span>
                 </span>
               </div>
-              <p className="text-xs max-w-sm leading-relaxed text-slate-500">
+              <p className="text-xs font-sans max-w-sm leading-relaxed text-slate-500">
                 The role-based B2B sales management and quotation engine designed for wholesale distribution,
                 equipment traders, and commercial contracting teams.
               </p>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs font-sans text-slate-400">
                 Enterprise B2B Distribution & Quoting Platform.
               </div>
             </div>
 
             {/* Col 2 */}
             <div>
-              <h5 className="text-xs font-bold uppercase tracking-wider mb-3 text-slate-900 dark:text-slate-200">
+              <h5 className="text-xs font-display font-bold uppercase tracking-wider mb-3 text-slate-900 dark:text-slate-200">
                 Product
               </h5>
-              <ul className="space-y-2 text-xs">
+              <ul className="space-y-2 text-xs font-sans">
                 <li>
                   <a href="#simulator" className="hover:text-blue-600 transition-colors">
                     Quote Calculator
@@ -2114,10 +2113,10 @@ await VendorProfile.updateOne(
 
             {/* Col 3 */}
             <div>
-              <h5 className="text-xs font-bold uppercase tracking-wider mb-3 text-slate-900 dark:text-slate-200">
+              <h5 className="text-xs font-display font-bold uppercase tracking-wider mb-3 text-slate-900 dark:text-slate-200">
                 Role Portals
               </h5>
-              <ul className="space-y-2 text-xs">
+              <ul className="space-y-2 text-xs font-sans">
                 <li>
                   <a href="#roles" className="hover:text-blue-600 transition-colors">
                     Vendors & Installers
@@ -2143,10 +2142,10 @@ await VendorProfile.updateOne(
 
             {/* Col 4 */}
             <div>
-              <h5 className="text-xs font-bold uppercase tracking-wider mb-3 text-slate-900 dark:text-slate-200">
+              <h5 className="text-xs font-display font-bold uppercase tracking-wider mb-3 text-slate-900 dark:text-slate-200">
                 Security & Governance
               </h5>
-              <ul className="space-y-2 text-xs text-slate-400">
+              <ul className="space-y-2 text-xs font-sans text-slate-400">
                 <li>Role-Based Access Control (RBAC)</li>
                 <li>Confidential Margin Protection</li>
                 <li>Private Catalog Security</li>
