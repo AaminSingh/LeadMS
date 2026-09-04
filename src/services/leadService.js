@@ -26,7 +26,7 @@ const leadService = {
     const email = data.customerEmail || data.email
     const phone = data.customerPhone || data.phone
 
-    return apiClient.put(`/leads/${id}`, {
+    return apiClient.put('/leads/' + id, {
       customerName: name,
       clientName: name,
       customerEmail: email,
@@ -34,11 +34,12 @@ const leadService = {
       customerPhone: phone,
       phone: phone,
       requirement: data.requirement,
+      ...(data.status ? { status: data.status } : {}),
     })
   },
 
   deleteLead(id) {
-    return apiClient.delete(`/leads/${id}`)
+    return apiClient.delete('/leads/' + id)
   },
 
   assignLead(leadId, teamMemberId) {
