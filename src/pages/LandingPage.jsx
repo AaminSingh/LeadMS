@@ -117,7 +117,24 @@ function LandingPage() {
     if (typeof window !== 'undefined') {
       localStorage.setItem('leadms-landing-theme', mode)
     }
+    if (typeof document !== 'undefined') {
+      if (mode === 'dark') {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    }
   }
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (themeMode === 'dark') {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    }
+  }, [themeMode])
 
   const isDark = themeMode === 'dark'
 
@@ -378,7 +395,7 @@ function LandingPage() {
                   className={`inline-flex items-center gap-1.5 rounded-xl px-4.5 py-2.5 text-sm font-semibold transition-all cursor-pointer shadow-sm ${
                     isDark
                       ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                      : 'bg-slate-900 hover:bg-slate-800 text-white'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/15'
                   }`}
                 >
                   Start Free Trial <ChevronRight size={15} />
@@ -444,10 +461,10 @@ function LandingPage() {
                 <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
                   <Link
                     to={isAuthenticated ? '/app/dashboard' : '/register'}
-                    className={`inline-flex items-center justify-center gap-2 rounded-xl px-7 py-3.5 text-base font-semibold shadow-sm transition-all hover:shadow hover:-translate-y-0.5 cursor-pointer ${
+                    className={`inline-flex items-center justify-center gap-2 rounded-xl px-7 py-3.5 text-base font-semibold transition-all hover:-translate-y-0.5 cursor-pointer shadow-md ${
                       isDark
-                        ? 'bg-white text-slate-950 hover:bg-slate-100'
-                        : 'bg-slate-900 text-white hover:bg-slate-800'
+                        ? 'bg-blue-600 text-white hover:bg-blue-500 shadow-blue-500/20'
+                        : 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/25'
                     }`}
                   >
                     Start Free Trial <ArrowRight size={17} />
@@ -817,10 +834,12 @@ function LandingPage() {
                         }}
                         className={`w-full py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-between cursor-pointer transition-all ${
                           includeInstallation
-                            ? 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300'
+                            ? isDark
+                              ? 'bg-emerald-950/70 border-emerald-600/60 text-emerald-300'
+                              : 'bg-emerald-50 border-emerald-300 text-emerald-900 shadow-2xs hover:bg-emerald-100/80'
                             : isDark
-                            ? 'bg-slate-900 border-slate-800 text-slate-400'
-                            : 'bg-white border-slate-200 text-slate-500'
+                            ? 'bg-slate-900 border-slate-700 text-slate-400'
+                            : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
                         }`}
                       >
                         <span>Include Rooftop Mounting & Wiring</span>
@@ -876,11 +895,25 @@ function LandingPage() {
                       </div>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 dark:bg-blue-950/40 dark:border-blue-900">
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+                    <div
+                      className={`p-3 rounded-xl border transition-all ${
+                        isDark
+                          ? 'bg-blue-950/90 border-blue-500/60 shadow-inner'
+                          : 'bg-gradient-to-br from-blue-600 to-indigo-600 border-blue-600 shadow-md shadow-blue-500/20 text-white'
+                      }`}
+                    >
+                      <div
+                        className={`text-[10px] font-bold uppercase tracking-wider ${
+                          isDark ? 'text-blue-300' : 'text-blue-100'
+                        }`}
+                      >
                         Final Client Total
                       </div>
-                      <div className="text-base font-black text-blue-700 dark:text-blue-300 font-mono">
+                      <div
+                        className={`text-base font-black font-mono tracking-tight ${
+                          isDark ? 'text-white' : 'text-white'
+                        }`}
+                      >
                         {formatINR(finalQuoteTotal)}
                       </div>
                     </div>
@@ -899,10 +932,10 @@ function LandingPage() {
                       onClick={() => setQuoteDispatched(true)}
                       className={`w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm ${
                         quoteDispatched
-                          ? 'bg-emerald-600 text-white'
+                          ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
                           : isDark
-                          ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                          : 'bg-slate-900 hover:bg-slate-800 text-white'
+                          ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-500/20'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20'
                       }`}
                     >
                       {quoteDispatched ? (
@@ -974,14 +1007,14 @@ function LandingPage() {
 
                     <button
                       onClick={() => setIsDemoProductLocked(!isDemoProductLocked)}
-                      className={`w-full py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all border ${
+                      className={`w-full py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all border shadow-2xs ${
                         isDemoProductLocked
                           ? isDark
-                            ? 'bg-rose-950/30 border-rose-900 text-rose-300 hover:bg-rose-900/40'
-                            : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
+                            ? 'bg-rose-950/50 border-rose-800 text-rose-300 hover:bg-rose-900/60'
+                            : 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100/80'
                           : isDark
                           ? 'bg-blue-600 text-white hover:bg-blue-500 border-blue-500'
-                          : 'bg-slate-900 text-white hover:bg-slate-800 border-slate-800'
+                          : 'bg-blue-600 text-white hover:bg-blue-700 border-blue-600 shadow-sm'
                       }`}
                     >
                       {isDemoProductLocked ? (
@@ -1079,20 +1112,32 @@ function LandingPage() {
 
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
                     <div
-                      className={`p-2 rounded-xl border ${
-                        isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-slate-50 border-slate-200/80'
+                      className={`p-2.5 rounded-xl border ${
+                        isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-slate-50 border-slate-200'
                       }`}
                     >
-                      <div className="text-[10px] text-slate-400">New</div>
-                      <div className="font-bold text-sm">142</div>
+                      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">New</div>
+                      <div className="font-bold text-slate-900 dark:text-slate-100 text-sm font-mono">142</div>
                     </div>
-                    <div className="p-2 rounded-xl bg-blue-50 border border-blue-200 dark:bg-blue-950/40 dark:border-blue-900">
-                      <div className="text-[10px] text-blue-600 dark:text-blue-400">Quoted</div>
-                      <div className="font-bold text-blue-700 dark:text-blue-300 text-sm">88</div>
+                    <div
+                      className={`p-2.5 rounded-xl border ${
+                        isDark
+                          ? 'bg-blue-950/80 border-blue-700 text-blue-300'
+                          : 'bg-blue-50 border-blue-200 text-blue-900 shadow-2xs'
+                      }`}
+                    >
+                      <div className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Quoted</div>
+                      <div className="font-bold text-blue-700 dark:text-blue-300 text-sm font-mono">88</div>
                     </div>
-                    <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900">
-                      <div className="text-[10px] text-emerald-600 dark:text-emerald-400">Won</div>
-                      <div className="font-bold text-emerald-700 dark:text-emerald-300 text-sm">54</div>
+                    <div
+                      className={`p-2.5 rounded-xl border ${
+                        isDark
+                          ? 'bg-emerald-950/80 border-emerald-700 text-emerald-300'
+                          : 'bg-emerald-50 border-emerald-200 text-emerald-900 shadow-2xs'
+                      }`}
+                    >
+                      <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Won</div>
+                      <div className="font-bold text-emerald-700 dark:text-emerald-300 text-sm font-mono">54</div>
                     </div>
                   </div>
                 </div>

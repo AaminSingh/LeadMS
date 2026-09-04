@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ─── Global Custom Properties for LeadMS Themes ─── */
 :root,
 [data-theme="cyan"] {
