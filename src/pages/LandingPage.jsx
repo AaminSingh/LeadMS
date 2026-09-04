@@ -20,18 +20,9 @@ import {
   Zap,
   Globe,
   Award,
-  Copy,
-  CheckCheck,
-  Server,
-  Database,
-  Cpu,
   Mail,
-  RefreshCw,
-  Code2,
-  Network,
   Workflow,
   Sliders,
-  FileCode,
   IndianRupee,
 } from 'lucide-react'
 import useAuthStore from '../store/useAuthStore'
@@ -109,215 +100,6 @@ const SAMPLE_PRODUCTS = [
   },
 ]
 
-// Architecture nodes metadata
-const ARCHITECTURE_NODES = [
-  {
-    id: 'frontend',
-    name: 'React 19 SPA & Zustand',
-    tag: 'Client Layer',
-    icon: Cpu,
-    color: 'text-blue-600 border-blue-200 bg-blue-50 dark:text-blue-400 dark:border-blue-900 dark:bg-blue-950/40',
-    dotColor: 'bg-blue-500',
-    latency: '12ms client render',
-    protocol: 'Virtual DOM + Stores',
-    description:
-      'High-performance React 19 UI state orchestrated by Zustand with persistent credentials and optimistic quoting updates.',
-    codeRef: 'src/store/useAuthStore.js',
-  },
-  {
-    id: 'interceptor',
-    name: 'Axios Interceptors',
-    tag: 'Network Gateway',
-    icon: Network,
-    color: 'text-indigo-600 border-indigo-200 bg-indigo-50 dark:text-indigo-400 dark:border-indigo-900 dark:bg-indigo-950/40',
-    dotColor: 'bg-indigo-500',
-    latency: '< 25ms roundtrip',
-    protocol: 'Bearer Auth & Refresh',
-    description:
-      'Injects Bearer JWT on every API request and performs silent refresh token rotation on 401 errors without session disruption.',
-    codeRef: 'src/services/apiClient.js',
-  },
-  {
-    id: 'backend',
-    name: 'Express v5 API Gateway',
-    tag: 'Backend Core',
-    icon: Server,
-    color: 'text-slate-700 border-slate-200 bg-slate-100 dark:text-slate-300 dark:border-slate-800 dark:bg-slate-900/60',
-    dotColor: 'bg-slate-500',
-    latency: '< 30ms execution',
-    protocol: 'REST / Middleware Chain',
-    description:
-      'Express v5 router with centralized error handling, input validation, and asynchronous quote calculation controllers.',
-    codeRef: 'leadms-backend/src/routes/leadRoutes.js',
-  },
-  {
-    id: 'jwt',
-    name: 'JWT Auth & Role Guard',
-    tag: 'Security Layer',
-    icon: ShieldCheck,
-    color: 'text-purple-600 border-purple-200 bg-purple-50 dark:text-purple-400 dark:border-purple-900 dark:bg-purple-950/40',
-    dotColor: 'bg-purple-500',
-    latency: '< 4ms signature verify',
-    protocol: 'HMAC SHA-256 JWT',
-    description:
-      'Enforces strict multi-tenant boundaries between Vendors, Wholesale Traders, and Sales Representatives with role-specific route gates.',
-    codeRef: 'leadms-backend/src/middleware/authMiddleware.js',
-  },
-  {
-    id: 'database',
-    name: 'MongoDB Atlas & Mongoose',
-    tag: 'Persistence Layer',
-    icon: Database,
-    color: 'text-emerald-600 border-emerald-200 bg-emerald-50 dark:text-emerald-400 dark:border-emerald-900 dark:bg-emerald-950/40',
-    dotColor: 'bg-emerald-500',
-    latency: '< 18ms query time',
-    protocol: 'Mongoose ODM / Mongo Wire',
-    description:
-      'Atomic $addToSet & $pull locking logic for private vendor catalogs with isolated collections for Users, Products, and Leads.',
-    codeRef: 'leadms-backend/src/models/Product.js',
-  },
-  {
-    id: 'services',
-    name: 'Nodemailer & PDF Dispatch',
-    tag: 'Async Services',
-    icon: Mail,
-    color: 'text-amber-600 border-amber-200 bg-amber-50 dark:text-amber-400 dark:border-amber-900 dark:bg-amber-950/40',
-    dotColor: 'bg-amber-500',
-    latency: '< 120ms queue dispatch',
-    protocol: 'SMTP / RFC 5322',
-    description:
-      'Automated transmission of itemized Indian Rupee quotation summaries directly to prospective leads upon quote approval.',
-    codeRef: 'leadms-backend/src/services/emailService.js',
-  },
-]
-
-// Real code snippets for the Code Integration Preview
-const CODE_SNIPPETS = {
-  quoteController: {
-    filename: 'leadController.js',
-    path: 'leadms-backend/src/controllers/leadController.js',
-    lang: 'javascript',
-    code: `// Express v5 Quote Calculation Engine
-export const generateQuote = async (req, res, next) => {
-  try {
-    const { products } = req.body; // Array of { productId, quantity }
-    const lead = await Lead.findOne({ _id: req.params.id });
-    if (!lead) return res.status(404).json({ message: 'Lead not found' });
-
-    // Enforce role isolation: verify vendor or assigned team member
-    if (req.user.role === 'vendor' && lead.vendorId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Unauthorized vendor access' });
-    }
-
-    const vendorProfile = await VendorProfile.findOne({ vendorId: lead.vendorId });
-    let baseTotal = 0;
-    const selectedProducts = [];
-
-    for (let item of products) {
-      const product = await Product.findById(item.productId);
-      if (product && product.isActive) {
-        const itemTotal = product.basePrice * (item.quantity || 1);
-        baseTotal += itemTotal;
-        selectedProducts.push({
-          productId: product._id,
-          quantity: item.quantity || 1,
-          priceAtQuote: product.basePrice
-        });
-      }
-    }
-
-    // Dynamic Indian Rupee margins & operational fees
-    const marginApplied = baseTotal * (vendorProfile.marginPercentage / 100);
-    const finalTotal = baseTotal + marginApplied + 
-      vendorProfile.installationPrice + vendorProfile.miscCharges;
-
-    lead.quote = { selectedProducts, baseTotal, marginApplied, finalTotal };
-    lead.status = 'quoted';
-    await lead.save();
-
-    res.status(200).json(lead);
-  } catch (error) {
-    next(error);
-  }
-};`,
-  },
-  apiClient: {
-    filename: 'apiClient.js',
-    path: 'src/services/apiClient.js',
-    lang: 'javascript',
-    code: `// React 19 Axios Interceptors with Silent JWT Refresh
-import axios from 'axios';
-import useAuthStore from '../store/useAuthStore';
-
-const apiClient = axios.create({
-  baseURL: 'https://leadms.onrender.com/api',
-  headers: { 'Content-Type': 'application/json' },
-});
-
-// Attach Bearer token on every outgoing request
-apiClient.interceptors.request.use((config) => {
-  const accessToken = useAuthStore.getState().accessToken;
-  if (accessToken) {
-    config.headers.Authorization = \`Bearer \${accessToken}\`;
-  }
-  return config;
-});
-
-// Handle 401s with silent token rotation
-apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      const refreshToken = useAuthStore.getState().refreshToken;
-      if (refreshToken) {
-        const { data } = await axios.post('/auth/refresh-token', { refreshToken });
-        useAuthStore.getState().setCredentials({ accessToken: data.accessToken });
-        originalRequest.headers.Authorization = \`Bearer \${data.accessToken}\`;
-        return apiClient(originalRequest);
-      }
-    }
-    return Promise.reject(error);
-  }
-);`,
-  },
-  leadModel: {
-    filename: 'Lead.js',
-    path: 'leadms-backend/src/models/Lead.js',
-    lang: 'javascript',
-    code: `// MongoDB Mongoose Schema with Embedded Quote Document
-const leadSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    status: {
-      type: String,
-      enum: ['new', 'contacted', 'quoted', 'accepted', 'rejected'],
-      default: 'new'
-    },
-    vendorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    quote: {
-      selectedProducts: [
-        {
-          productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-          quantity: Number,
-          priceAtQuote: Number
-        }
-      ],
-      baseTotal: Number,
-      marginApplied: Number,
-      installationPrice: Number,
-      miscCharges: Number,
-      finalTotal: Number
-    }
-  },
-  { timestamps: true }
-);`,
-  },
-}
-
 function LandingPage() {
   const { isAuthenticated } = useAuthStore()
   const [activeRoleTab, setActiveRoleTab] = useState('vendor')
@@ -357,13 +139,6 @@ function LandingPage() {
   const [activeStep, setActiveStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(true)
   const [stepProgress, setStepProgress] = useState(0)
-
-  // Feature 4: Interactive Architecture Map State
-  const [activeArchNode, setActiveArchNode] = useState(ARCHITECTURE_NODES[0])
-
-  // Feature 5: Code Integration Preview Tab State
-  const [activeCodeTab, setActiveCodeTab] = useState('quoteController')
-  const [copiedCode, setCopiedCode] = useState(false)
 
   // Scroll-based viewport playback using Intersection Observer API
   const videoRef = useRef(null)
@@ -461,12 +236,6 @@ function LandingPage() {
     setQuoteDispatched(false)
   }
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(CODE_SNIPPETS[activeCodeTab].code)
-    setCopiedCode(true)
-    setTimeout(() => setCopiedCode(false), 2000)
-  }
-
   return (
     <div
       className={`min-h-screen font-sans transition-colors duration-200 selection:bg-blue-600 selection:text-white ${
@@ -531,19 +300,19 @@ function LandingPage() {
             }`}
           >
             <a href="#simulator" className="hover:text-blue-600 transition-colors">
-              Quote Simulator
+              Quote Calculator
             </a>
             <a href="#mechanism" className="hover:text-blue-600 transition-colors">
-              B2B Mechanism
+              How It Works
             </a>
-            <a href="#architecture" className="hover:text-blue-600 transition-colors">
-              Architecture Map
-            </a>
-            <a href="#code" className="hover:text-blue-600 transition-colors">
-              API & Code
+            <a href="#collaboration" className="hover:text-blue-600 transition-colors">
+              Wholesale Bridge
             </a>
             <a href="#roles" className="hover:text-blue-600 transition-colors">
-              Roles
+              Role Portals
+            </a>
+            <a href="#metrics" className="hover:text-blue-600 transition-colors">
+              Platform Impact
             </a>
           </nav>
 
@@ -734,8 +503,8 @@ function LandingPage() {
               </div>
 
               {/* Right Column: Floating Animated Workflow Video Card (Stripe Style) */}
-              <div className="lg:col-span-6 relative z-10 w-full">
-                <div className="relative mx-auto max-w-lg lg:max-w-none group">
+              <div className="lg:col-span-6 relative z-10 w-full flex justify-center lg:justify-start">
+                <div className="relative mx-auto lg:mx-0 w-full max-w-lg lg:max-w-none lg:w-[114%] xl:w-[120%] group">
                   {/* Multi-layered ambient depth glow (Stripe hero aesthetic) */}
                   <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-r from-blue-600/20 via-indigo-600/15 to-blue-500/20 blur-xl opacity-80 -z-10 transition-opacity" />
 
@@ -785,7 +554,7 @@ function LandingPage() {
 
                   {/* Floating Micro-Card 1: Quoting Breakdown */}
                   <div
-                    className={`absolute -bottom-6 -left-6 hidden sm:flex items-center gap-3.5 rounded-2xl border p-4 shadow-xl backdrop-blur-md ${
+                    className={`absolute -bottom-6 -left-3 sm:-left-4 hidden sm:flex items-center gap-3.5 rounded-2xl border p-4 shadow-xl backdrop-blur-md ${
                       isDark
                         ? 'border-slate-800 bg-slate-900/95 text-white'
                         : 'border-slate-200 bg-white/95 text-slate-900'
@@ -816,9 +585,9 @@ function LandingPage() {
                       <Lock size={15} />
                     </div>
                     <div>
-                      <div className="text-xs font-bold">Product Locked</div>
-                      <div className="text-[10px] text-blue-600 dark:text-blue-400 font-mono">
-                        Atomic $addToSet
+                      <div className="text-xs font-bold">Locked Pricing</div>
+                      <div className="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">
+                        Private Catalog Rate
                       </div>
                     </div>
                   </div>
@@ -874,22 +643,22 @@ function LandingPage() {
                 }`}
               >
                 <Calculator size={13} />
-                <span>Feature 1: Interactive Quoting Engine</span>
+                <span>Live Quoting & Pricing Engine</span>
               </div>
               <h2
                 className={`text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight ${
                   isDark ? 'text-white' : 'text-slate-900'
                 }`}
               >
-                Modern 3-Column Bento Architecture
+                Instant Quote Building with Live Margin Math
               </h2>
               <p
                 className={`mt-4 text-base sm:text-lg ${
                   isDark ? 'text-slate-400' : 'text-slate-600'
                 }`}
               >
-                Experience the real math engine powering LeadMS. Adjust quantities, slide vendor margins, and watch
-                subtotals and final totals recalculate live in Indian Rupees (₹).
+                Experience the real-time pricing engine built for commercial distribution. Adjust equipment quantities,
+                tune vendor profit margins, and calculate itemized proposals live in Indian Rupees (₹) with guaranteed math accuracy.
               </p>
             </div>
 
@@ -1150,7 +919,7 @@ function LandingPage() {
                 </div>
               </div>
 
-              {/* ── BENTO BLOCK 2 (Col 3 Top, Span 4): ATOMIC CATALOG LOCKING ENGINE ── */}
+              {/* ── BENTO BLOCK 2 (Col 3 Top, Span 4): ONE-CLICK CATALOG LOCKING ── */}
               <div
                 className={`lg:col-span-4 rounded-3xl border p-6 sm:p-7 shadow-sm flex flex-col justify-between transition-all ${
                   isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200/90'
@@ -1161,15 +930,15 @@ function LandingPage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900">
                       <Lock size={19} />
                     </div>
-                    <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800">
-                      Atomic $addToSet
+                    <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800">
+                      Locked Pricing
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold mb-2">Atomic Catalog Locking</h3>
+                  <h3 className="text-lg font-bold mb-2">One-Click Catalog Locking</h3>
                   <p className="text-xs text-slate-500 leading-relaxed mb-5">
-                    Vendors lock wholesale supplier inventory into private catalogs with atomic MongoDB operations,
-                    shielding raw wholesale prices from retail leads.
+                    Vendors lock wholesale supplier inventory into private catalogs with one click, shielding raw
+                    purchase costs from retail leads and competitors.
                   </p>
 
                   {/* Interactive Toggle Card */}
@@ -1221,7 +990,7 @@ function LandingPage() {
                         </>
                       ) : (
                         <>
-                          <Lock size={14} /> Lock to My Catalog ($addToSet)
+                          <Lock size={14} /> Lock to Private Catalog
                         </>
                       )}
                     </button>
@@ -1230,7 +999,7 @@ function LandingPage() {
 
                 <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 text-[11px] text-slate-400">
                   <CheckCircle2 size={14} className="text-emerald-500" />
-                  <span>Zero double-allocation across vendor teams.</span>
+                  <span>Prevents unauthorized margin exposure across vendor teams.</span>
                 </div>
               </div>
 
@@ -1245,8 +1014,8 @@ function LandingPage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
                       <ShieldCheck size={20} />
                     </div>
-                    <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800">
-                      Field Redaction
+                    <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800">
+                      Private Margins
                     </span>
                   </div>
 
@@ -1281,7 +1050,7 @@ function LandingPage() {
                 </div>
 
                 <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
-                  <Check size={14} /> Strict JWT role filtering in Mongoose projections.
+                  <Check size={14} /> Enforced role security: sales reps only see final approved quotes.
                 </div>
               </div>
 
@@ -1296,16 +1065,16 @@ function LandingPage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400 border border-blue-200 dark:border-blue-900">
                       <TrendingUp size={20} />
                     </div>
-                    <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800">
+                    <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800">
                       Pipeline Velocity
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold mb-2">Automated Stage Transitions</h3>
+                  <h3 className="text-lg font-bold mb-2">Automated Pipeline Funnel</h3>
                   <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                    Leads automatically graduate from <span className="font-mono text-blue-600 font-bold">new</span> to{' '}
-                    <span className="font-mono text-emerald-600 font-bold">quoted</span> upon PDF generation, updating the
-                    team funnel in real time.
+                    Deals automatically advance from <span className="font-semibold text-blue-600">New</span> to{' '}
+                    <span className="font-semibold text-emerald-600">Quoted</span> upon proposal generation, keeping sales teams
+                    synchronized in real time.
                   </p>
 
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
@@ -1334,7 +1103,7 @@ function LandingPage() {
                 </div>
               </div>
 
-              {/* ── BENTO BLOCK 5 (Col 3 on Bottom Row, Span 4): AUDIT & EXPORT ── */}
+              {/* ── BENTO BLOCK 5 (Col 3 on Bottom Row, Span 4): INSTANT PROPOSAL DELIVERY ── */}
               <div
                 className={`lg:col-span-4 rounded-3xl border p-6 sm:p-7 shadow-sm flex flex-col justify-between transition-all ${
                   isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200/90'
@@ -1345,32 +1114,32 @@ function LandingPage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950 dark:text-purple-400 border border-purple-200 dark:border-purple-900">
                       <Mail size={20} />
                     </div>
-                    <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800">
-                      Nodemailer SMTP
+                    <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800">
+                      Auto-Sent Quotes
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold mb-2">Automated Dispatch Queue</h3>
+                  <h3 className="text-lg font-bold mb-2">Instant Proposal Delivery</h3>
                   <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                    Clean transactional email templates dispatch branded Indian Rupee quotations to customers with one
-                    click, logging delivery receipts directly into the audit trail.
+                    Deliver branded, itemized quotation summaries directly to prospective clients with one click,
+                    logging delivery timestamps into your verified audit history.
                   </p>
 
                   <div
-                    className={`p-3 rounded-xl border text-xs font-mono space-y-1 ${
+                    className={`p-3 rounded-xl border text-xs space-y-1 ${
                       isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-slate-50 border-slate-200/80'
                     }`}
                   >
-                    <div className="text-[10px] text-slate-400">POST /api/leads/:id/quote</div>
-                    <div className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                      ✓ 200 OK — Proposal Sent via SMTP
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Proposal #LM-4081 Dispatched</div>
+                    <div className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
+                      <CheckCircle2 size={13} /> Delivered via Email & WhatsApp
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 text-[11px] text-slate-500">
                   <CheckCircle2 size={14} className="text-emerald-500" />
-                  <span>Integrated with AWS SES, SendGrid & SMTP</span>
+                  <span>Automated transmission with complete audit trail</span>
                 </div>
               </div>
             </div>
@@ -1702,7 +1471,7 @@ await VendorProfile.updateOne(
                             : 'bg-emerald-50 border-emerald-200 text-emerald-800'
                         }`}
                       >
-                        <span>Nodemailer: Quote PDF Dispatched</span>
+                        <span>Instant Proposal PDF Sent</span>
                         <span className="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold">
                           DELIVERED
                         </span>
@@ -1736,411 +1505,11 @@ await VendorProfile.updateOne(
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-slate-400 font-mono">Stage {activeStep + 1} of 3</span>
                   <button
-                    onClick={() => handleManualStepChange((activeStep + 1) % 3)}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                    onClick={() => setActiveStep((prev) => (prev + 1) % 3)}
+                    className="text-xs font-semibold px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white transition-colors cursor-pointer"
                   >
-                    Next Stage <ChevronRight size={14} />
+                    Next Stage →
                   </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ────────────────── 4. FEATURE 4: INTERACTIVE ARCHITECTURE FLOW MAP ────────────────── */}
-        <section
-          id="architecture"
-          className={`relative py-24 border-t transition-colors ${
-            isDark ? 'bg-[#0c101a] border-slate-800/80 text-slate-100' : 'bg-slate-50/70 border-slate-200 text-slate-900'
-          }`}
-        >
-          <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <div
-                className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-semibold mb-3 ${
-                  isDark
-                    ? 'bg-blue-950/60 border border-blue-800/60 text-blue-300'
-                    : 'bg-blue-50 border border-blue-200 text-blue-700'
-                }`}
-              >
-                <Network size={13} />
-                <span>Feature 4: Full-Stack Architecture Topology</span>
-              </div>
-              <h2
-                className={`text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight ${
-                  isDark ? 'text-white' : 'text-slate-900'
-                }`}
-              >
-                Interactive Architecture Flow Map
-              </h2>
-              <p className={`mt-4 text-base sm:text-lg ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                Inspect how the React 19 SPA communicates with Express v5 through Axios interceptors, verifies JWT
-                claims, and operates atomically on MongoDB collections.
-              </p>
-            </div>
-
-            {/* INTERACTIVE NODE-AND-EDGE TOPOLOGY CANVAS */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              {/* Left Column: Visual Node Network Graph */}
-              <div
-                className={`lg:col-span-8 rounded-3xl border p-6 sm:p-8 shadow-sm ${
-                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200/90'
-                }`}
-              >
-                <div
-                  className={`flex items-center justify-between border-b pb-4 mb-6 ${
-                    isDark ? 'border-slate-800' : 'border-slate-100'
-                  }`}
-                >
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-                    Interactive Topology: Click any node to inspect telemetry
-                  </div>
-                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800">
-                    Active: {activeArchNode.name}
-                  </span>
-                </div>
-
-                {/* Nodes Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 relative">
-                  {ARCHITECTURE_NODES.map((node) => {
-                    const Icon = node.icon
-                    const isSelected = activeArchNode.id === node.id
-
-                    return (
-                      <button
-                        key={node.id}
-                        onClick={() => setActiveArchNode(node)}
-                        className={`text-left p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden group ${
-                          isSelected
-                            ? isDark
-                              ? 'bg-slate-800 border-blue-500 shadow-md scale-[1.02]'
-                              : 'bg-blue-50/50 border-blue-400 shadow-sm scale-[1.02]'
-                            : isDark
-                            ? 'bg-slate-950/70 border-slate-800 hover:border-slate-700'
-                            : 'bg-slate-50 border-slate-200 hover:border-slate-300'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <div
-                            className={`h-10 w-10 rounded-xl flex items-center justify-center border ${node.color}`}
-                          >
-                            <Icon size={20} />
-                          </div>
-                          <span
-                            className={`h-2.5 w-2.5 rounded-full ${node.dotColor} ${
-                              isSelected ? 'animate-ping' : ''
-                            }`}
-                          />
-                        </div>
-
-                        <div className="text-xs font-mono font-bold text-slate-400 mb-1 uppercase tracking-wider">
-                          {node.tag}
-                        </div>
-                        <div className="text-sm font-black group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                          {node.name}
-                        </div>
-
-                        <div
-                          className={`mt-3 pt-3 border-t flex items-center justify-between text-[10px] font-mono ${
-                            isDark ? 'border-slate-800 text-slate-400' : 'border-slate-200 text-slate-500'
-                          }`}
-                        >
-                          <span>{node.latency}</span>
-                          <span className="text-blue-600 dark:text-blue-400 font-bold group-hover:underline">
-                            Inspect &rarr;
-                          </span>
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
-
-                {/* Data Pipeline Flow Graphic */}
-                <div
-                  className={`mt-8 p-4 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono ${
-                    isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-slate-50 border-slate-200/80'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-slate-400 font-sans">Pipeline:</span>
-                    <span className="font-bold">Browser</span>
-                    <span className="text-slate-400">&rarr;</span>
-                    <span className="font-bold text-indigo-600 dark:text-indigo-400">Axios</span>
-                    <span className="text-slate-400">&rarr;</span>
-                    <span className="font-bold text-blue-600 dark:text-blue-400">Express v5</span>
-                    <span className="text-slate-400">&rarr;</span>
-                    <span className="font-bold text-purple-600 dark:text-purple-400">JWT Guard</span>
-                    <span className="text-slate-400">&rarr;</span>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400">MongoDB</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/60 dark:border-emerald-800 dark:text-emerald-400 px-2.5 py-1 rounded-lg">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                    TLS 1.3 / Sub-50ms
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Active Node Telemetry Inspector */}
-              <div
-                className={`lg:col-span-4 rounded-3xl border p-6 sm:p-7 shadow-sm ${
-                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200/90'
-                }`}
-              >
-                <div
-                  className={`flex items-center justify-between border-b pb-4 mb-5 ${
-                    isDark ? 'border-slate-800' : 'border-slate-100'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`h-8 w-8 rounded-lg flex items-center justify-center border ${activeArchNode.color}`}
-                    >
-                      <activeArchNode.icon size={16} />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold">{activeArchNode.name}</div>
-                      <div className="text-[10px] text-slate-400">{activeArchNode.tag}</div>
-                    </div>
-                  </div>
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800 px-2 py-0.5 rounded-full">
-                    HEALTHY
-                  </span>
-                </div>
-
-                <div className="space-y-4 text-xs">
-                  <div>
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                      Component Function
-                    </div>
-                    <p
-                      className={`leading-relaxed p-3 rounded-xl border ${
-                        isDark ? 'bg-slate-950/70 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200/80 text-slate-700'
-                      }`}
-                    >
-                      {activeArchNode.description}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 font-mono">
-                    <div
-                      className={`p-3 rounded-xl border ${
-                        isDark ? 'bg-slate-950/70 border-slate-800' : 'bg-slate-50 border-slate-200/80'
-                      }`}
-                    >
-                      <div className="text-[10px] text-slate-400">Latency</div>
-                      <div className="font-bold text-xs mt-0.5 text-blue-600 dark:text-blue-400">
-                        {activeArchNode.latency}
-                      </div>
-                    </div>
-                    <div
-                      className={`p-3 rounded-xl border ${
-                        isDark ? 'bg-slate-950/70 border-slate-800' : 'bg-slate-50 border-slate-200/80'
-                      }`}
-                    >
-                      <div className="text-[10px] text-slate-400">Protocol Spec</div>
-                      <div className="font-bold text-xs mt-0.5 text-emerald-600 dark:text-emerald-400">
-                        {activeArchNode.protocol}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                      Source Implementation File
-                    </div>
-                    <div
-                      className={`p-2.5 rounded-xl border font-mono text-[11px] flex items-center gap-1.5 ${
-                        isDark ? 'bg-slate-950 border-slate-800 text-blue-400' : 'bg-slate-50 border-slate-200 text-blue-700'
-                      }`}
-                    >
-                      <FileCode size={13} />
-                      {activeArchNode.codeRef}
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  className={`mt-6 pt-4 border-t flex items-center justify-between text-[11px] text-slate-400 ${
-                    isDark ? 'border-slate-800' : 'border-slate-100'
-                  }`}
-                >
-                  <span>Architecture SLA:</span>
-                  <span className="font-bold font-mono">99.98% High Availability</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ────────────────── 5. FEATURE 5: CODE INTEGRATION PREVIEW SPLIT-SECTION ────────────────── */}
-        <section
-          id="code"
-          className={`relative py-24 border-t transition-colors ${
-            isDark ? 'bg-[#090d16] border-slate-800/80 text-slate-100' : 'bg-white border-slate-200 text-slate-900'
-          }`}
-        >
-          <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-              {/* Left Column: Enterprise Narrative */}
-              <div className="lg:col-span-5 space-y-6">
-                <div
-                  className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-semibold ${
-                    isDark
-                      ? 'bg-blue-950/60 border border-blue-800/60 text-blue-300'
-                      : 'bg-blue-50 border border-blue-200 text-blue-700'
-                  }`}
-                >
-                  <Code2 size={13} />
-                  <span>Feature 5: Production-Grade Codebase</span>
-                </div>
-
-                <h2
-                  className={`text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight ${
-                    isDark ? 'text-white' : 'text-slate-900'
-                  }`}
-                >
-                  Engineered with Enterprise Rigor, Not Fragile Sheets
-                </h2>
-
-                <p className={`text-base leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                  Every quote calculation, catalog lock, and role boundary is strictly validated through verified
-                  Express v5 controllers and Mongoose schemas. Inspect real production code snippets right in your
-                  browser.
-                </p>
-
-                <div className="space-y-4 pt-2">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400 border border-blue-200 dark:border-blue-900">
-                      <Lock size={17} />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold">Atomic Concurrency Safety</h4>
-                      <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                        MongoDB <code className="font-semibold text-blue-600 dark:text-blue-400">$addToSet</code> ensures
-                        product locks cannot collide or overwrite during simultaneous updates.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900">
-                      <RefreshCw size={17} />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold">Silent Dual-Token Rotation</h4>
-                      <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                        Short-lived 15m access tokens paired with secure 7d refresh tokens prevent session timeouts
-                        during lengthy proposal authoring.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
-                      <IndianRupee size={17} />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold">Zero-Rounding Math Engine</h4>
-                      <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                        Dynamic Indian Rupee formulas compute margins, certified labor charges, and logistics with
-                        deterministic decimal accuracy.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-3 flex items-center gap-4">
-                  <Link
-                    to={isAuthenticated ? '/app/leads' : '/register'}
-                    className={`inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold shadow-sm transition-all cursor-pointer ${
-                      isDark
-                        ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                        : 'bg-slate-900 hover:bg-slate-800 text-white'
-                    }`}
-                  >
-                    Deploy Your Workspace <ArrowRight size={15} />
-                  </Link>
-                </div>
-              </div>
-
-              {/* Right Column: Dark Syntax-Highlighted Code Editor Window */}
-              <div className="lg:col-span-7">
-                <div className="rounded-2xl border border-slate-800 bg-[#0c1017] shadow-2xl overflow-hidden text-slate-100">
-                  {/* Mac OS Window Header with File Tabs */}
-                  <div className="flex flex-wrap items-center justify-between border-b border-slate-800 bg-[#080c12] px-4 py-2.5">
-                    {/* Window Control Dots */}
-                    <div className="flex items-center gap-3">
-                      <div className="flex gap-1.5">
-                        <div className="h-3 w-3 rounded-full bg-rose-500" />
-                        <div className="h-3 w-3 rounded-full bg-amber-500" />
-                        <div className="h-3 w-3 rounded-full bg-emerald-500" />
-                      </div>
-
-                      {/* File Tabs */}
-                      <div className="flex gap-1">
-                        {[
-                          { id: 'quoteController', label: 'leadController.js' },
-                          { id: 'apiClient', label: 'apiClient.js' },
-                          { id: 'leadModel', label: 'Lead.js' },
-                        ].map((tab) => (
-                          <button
-                            key={tab.id}
-                            onClick={() => setActiveCodeTab(tab.id)}
-                            className={`px-3 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer ${
-                              activeCodeTab === tab.id
-                                ? 'bg-slate-800 text-blue-400 font-bold border border-slate-700'
-                                : 'text-slate-400 hover:text-white hover:bg-slate-900'
-                            }`}
-                          >
-                            {tab.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Copy Code Button */}
-                    <button
-                      onClick={handleCopyCode}
-                      className="inline-flex items-center gap-1.5 text-xs font-mono text-slate-400 hover:text-white transition-colors cursor-pointer bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-800"
-                      title="Copy code snippet"
-                    >
-                      {copiedCode ? (
-                        <>
-                          <CheckCheck size={13} className="text-emerald-400" />
-                          <span className="text-emerald-400">Copied!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy size={13} />
-                          <span>Copy</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  {/* Code Content Block */}
-                  <div className="p-4 sm:p-6 bg-[#0c1017] font-mono text-xs overflow-x-auto code-scroll max-h-[460px]">
-                    <div className="text-[11px] text-slate-500 mb-3 border-b border-slate-800/80 pb-2 flex items-center justify-between">
-                      <span>{CODE_SNIPPETS[activeCodeTab].path}</span>
-                      <span className="text-slate-400 uppercase">{CODE_SNIPPETS[activeCodeTab].lang}</span>
-                    </div>
-
-                    <pre className="text-slate-300 leading-relaxed font-mono">
-                      <code>{CODE_SNIPPETS[activeCodeTab].code}</code>
-                    </pre>
-                  </div>
-
-                  {/* Footer Bar of Code Window */}
-                  <div className="border-t border-slate-800 bg-[#080c12] px-4 py-2 flex items-center justify-between text-[10px] font-mono text-slate-500">
-                    <div className="flex items-center gap-3">
-                      <span>UTF-8</span>
-                      <span>JavaScript ES2024</span>
-                      <span>Node v20.x</span>
-                    </div>
-                    <span className="text-emerald-400">Lint: 0 Errors</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -2225,7 +1594,7 @@ await VendorProfile.updateOne(
                       1
                     </div>
                     <div>
-                      <h4 className="font-bold text-base">Atomic Product Locking</h4>
+                      <h4 className="font-bold text-base">Instant Catalog Locking</h4>
                       <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                         Vendors claim exclusive supplier items into their active sales catalog with one click.
                       </p>
@@ -2271,17 +1640,17 @@ await VendorProfile.updateOne(
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <h2 className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-2">
-                Multi-Tenant Governance
+                Role-Based Portals
               </h2>
               <p
                 className={`text-3xl sm:text-4xl font-black tracking-tight ${
                   isDark ? 'text-white' : 'text-slate-900'
                 }`}
               >
-                Tailored for Every Stakeholder
+                Built for Every Role Across the Wholesale Lifecycle
               </p>
               <p className={`mt-2 text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                Select a role below to see tailored tools and capabilities.
+                Select a role below to explore customized dashboards and quoting tools designed for your workflow.
               </p>
             </div>
 
@@ -2586,7 +1955,7 @@ await VendorProfile.updateOne(
 
               <div className="pt-4 md:pt-0">
                 <div className="text-4xl sm:text-5xl font-black tracking-tight text-blue-400 mb-1">100%</div>
-                <div className="text-xs sm:text-sm font-medium text-slate-300">Role Data Isolation</div>
+                <div className="text-xs sm:text-sm font-medium text-slate-300">Confidential Margin Protection</div>
               </div>
             </div>
           </div>
@@ -2631,7 +2000,7 @@ await VendorProfile.updateOne(
               </div>
 
               <div className="relative mt-6 text-xs text-slate-400">
-                Immediate access • No credit card required • Full REST API capability
+                Immediate access • No credit card required • Instant Team Onboarding
               </div>
             </div>
           </div>
@@ -2665,7 +2034,7 @@ await VendorProfile.updateOne(
                 equipment traders, and commercial contracting teams.
               </p>
               <div className="text-xs text-slate-400">
-                Built with React 19, Tailwind CSS v4, Express v5 & MongoDB Atlas.
+                Enterprise B2B Distribution & Quoting Platform.
               </div>
             </div>
 
@@ -2677,22 +2046,22 @@ await VendorProfile.updateOne(
               <ul className="space-y-2 text-xs">
                 <li>
                   <a href="#simulator" className="hover:text-blue-600 transition-colors">
-                    Quote Simulator
+                    Quote Calculator
                   </a>
                 </li>
                 <li>
                   <a href="#mechanism" className="hover:text-blue-600 transition-colors">
-                    B2B Mechanism
+                    How It Works
                   </a>
                 </li>
                 <li>
-                  <a href="#architecture" className="hover:text-blue-600 transition-colors">
-                    Architecture Map
+                  <a href="#collaboration" className="hover:text-blue-600 transition-colors">
+                    Wholesale Bridge
                   </a>
                 </li>
                 <li>
-                  <a href="#code" className="hover:text-blue-600 transition-colors">
-                    Code Snippets
+                  <a href="#roles" className="hover:text-blue-600 transition-colors">
+                    Role Portals
                   </a>
                 </li>
               </ul>
@@ -2730,13 +2099,13 @@ await VendorProfile.updateOne(
             {/* Col 4 */}
             <div>
               <h5 className="text-xs font-bold uppercase tracking-wider mb-3 text-slate-900 dark:text-slate-200">
-                Security & Compliance
+                Security & Governance
               </h5>
               <ul className="space-y-2 text-xs text-slate-400">
-                <li>JWT Role Guarding</li>
-                <li>Mongoose Projections</li>
-                <li>Atomic Locking</li>
-                <li>GDPR Compliant</li>
+                <li>Role-Based Access Control (RBAC)</li>
+                <li>Confidential Margin Protection</li>
+                <li>Private Catalog Security</li>
+                <li>Audit Logs & Compliance</li>
               </ul>
             </div>
           </div>
