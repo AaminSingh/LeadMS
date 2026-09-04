@@ -1,8 +1,12 @@
 import axios from 'axios'
 import useAuthStore from '../store/useAuthStore'
 
+const rawBase = import.meta.env.VITE_API_BASE_URL || 'https://leadms.onrender.com/api';
+const cleanBase = rawBase.replace(/\/+$/, '');
+const baseURL = cleanBase.endsWith('/api') ? cleanBase : `${cleanBase}/api`;
+
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://leadms.onrender.com/api',
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },

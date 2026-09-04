@@ -1,3 +1,11 @@
+try {
+  if (typeof process.loadEnvFile === 'function') {
+    process.loadEnvFile();
+  }
+} catch (e) {
+  // .env might be passed via cloud environment or container
+}
+
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -15,12 +23,19 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Routes
+// Routes with /api prefix
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/vendor', vendorRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/admin', adminRoutes);
+
+// Fallback aliases without /api prefix
+app.use('/auth', authRoutes);
+app.use('/products', productRoutes);
+app.use('/vendor', vendorRoutes);
+app.use('/leads', leadRoutes);
+app.use('/admin', adminRoutes);
 
 // Base route for health check / welcome
 app.get('/', (req, res) => {
@@ -32,11 +47,10 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Connect to MongoDB
-if (process.env.MONGO_URI) {
-  mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.error('MongoDB connection error:', err));
-}
+const mongoUri = process.env.MONGO_URI || 'mongodb+srv://leadms:leadms1234@cluster0.cfs57yw.mongodb.net/leadms';
+mongoose.connect(mongoUri)
+  .then(() => console.log('MongoDB Connected successfully'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // Start server only if not running in a serverless environment (like Vercel)
 const PORT = process.env.PORT || 5000;

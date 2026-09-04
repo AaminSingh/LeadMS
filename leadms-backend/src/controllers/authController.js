@@ -64,9 +64,13 @@ export const register = async (req, res, next) => {
     }
 
     if (!emailSent) {
+      // Auto-confirm user so they are not locked out if email delivery fails
+      user.isEmailConfirmed = true;
+      await user.save();
+
       return res.status(201).json({
         success: true,
-        message: 'Account created successfully! Note: Confirmation email delivery failed. Please check your credentials or contact administrator.',
+        message: 'Account created successfully! You can now log in.',
         emailWarning
       });
     }
