@@ -12,31 +12,74 @@ const generateTokens = (id) => {
 
 export const register = async (req, res, next) => {
   try {
-    const { email, password, role, firstName, lastName } = req.body;
+    let { email, password, role, firstName, lastName, name } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    const normalizedEmail = (email || '').trim().toLowerCase();
+    const normalizedRole = (role || '').trim().toLowerCase();
 
     // Only allow trader and vendor self-signup
-    if (!['trader', 'vendor'].includes(role)) {
-      return res.status(400).json({ message: 'Invalid role for public signup' });
+    if (!['trader', 'vendor'].includes(normalizedRole)) {
+      return res.status(400).json({ message: 'Invalid role for public signup. Allowed roles are Trader or Vendor.' });
     }
 
-    const userExists = await User.findOne({ email });
+    // Support single 'name' field if firstName / lastName not explicitly separated
+    if (name && (!firstName || !lastName)) {
+      const nameParts = name.trim().split(/\s+/);
+      firstName = firstName || nameParts[0] || '';
+      lastName = lastName || nameParts.slice(1).join(' ') || '';
+    }
+
+    const userExists = await User.findOne({ email: normalizedEmail });
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: 'A user with this email address already exists.' });
     }
 
-    const user = await User.create({ email, password, role, firstName, lastName });
+    const user = await User.create({
+      email: normalizedEmail,
+      password,
+      role: normalizedRole,
+      firstName: firstName || '',
+      lastName: lastName || ''
+    });
 
-    // Create confirmation token
-    const tokenStr = crypto.randomBytes(32).toString('hex');
-    await Token.create({ userId: user._id, token: tokenStr, type: 'email-confirmation' });
+    // Create confirmation token and attempt email dispatch in dedicated try/catch
+    let emailSent = false;
+    let emailWarning = null;
 
-    // Send email (points to backend server port 5000 where confirmEmail route handles verification)
-    const domain = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 5000}`;
-    await sendConfirmationEmail(user.email, tokenStr, domain);
+    try {
+      const tokenStr = crypto.randomBytes(32).toString('hex');
+      await Token.create({ userId: user._id, token: tokenStr, type: 'email-confirmation' });
 
-    res.status(201).json({ message: 'Registration successful. Please check your email to verify your account.' });
+      // Send email (points to backend server port 5000 where confirmEmail route handles verification)
+      const domain = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 5000}`;
+      await sendConfirmationEmail(user.email, tokenStr, domain);
+      emailSent = true;
+    } catch (mailErr) {
+      console.error('[authController] Confirmation email could not be sent:', mailErr);
+      emailWarning = mailErr.message || 'SMTP delivery failed';
+    }
+
+    if (!emailSent) {
+      return res.status(201).json({
+        success: true,
+        message: 'Account created successfully! Note: Confirmation email delivery failed. Please check your credentials or contact administrator.',
+        emailWarning
+      });
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: 'Registration successful. Please check your email to verify your account.'
+    });
   } catch (error) {
-    next(error);
+    console.error('[authController] Registration error:', error);
+    return res.status(error.statusCode || 400).json({
+      message: error.message || 'Registration failed. Please check your information and try again.'
+    });
   }
 };
 

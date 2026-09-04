@@ -16,7 +16,9 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['trader', 'vendor', 'admin', 'team-member'],
-    required: true
+    required: true,
+    lowercase: true,
+    trim: true
   },
   isEmailConfirmed: {
     type: Boolean,

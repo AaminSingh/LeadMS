@@ -1,29 +1,45 @@
 import nodemailer from 'nodemailer';
 
 // Create reusable transporter object using SMTP transport
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: process.env.SMTP_PORT || 465,
-  secure: true, // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
+const getTransporter = () => {
+  const user = process.env.EMAIL_USER || process.env.SMTP_USER;
+  const pass = process.env.EMAIL_PASS || process.env.SMTP_PASS;
+
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT, 10) || 465,
+    secure: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) === 465 : true,
+    auth: {
+      user,
+      pass
+    }
+  });
+};
 
 const sendEmail = async (to, subject, text, html) => {
+  const user = process.env.EMAIL_USER || process.env.SMTP_USER;
+  const from = process.env.FROM_EMAIL || user || 'noreply@crm.local';
+  const transporter = getTransporter();
+
   try {
+    console.log(`[EmailService] Attempting to send email to: ${to} (Subject: "${subject}") from: ${from}`);
     const info = await transporter.sendMail({
-      from: `"CRM Backend" <${process.env.FROM_EMAIL || 'noreply@crm.local'}>`,
+      from: `"LeadMS Platform" <${from}>`,
       to,
       subject,
       text,
       html
     });
-    console.log(`Email sent to ${to}: ${info.messageId}`);
+    console.log(`[EmailService] Email successfully delivered to ${to}. MessageId: ${info.messageId}`);
     return info;
   } catch (error) {
-    console.error(`Error sending email to ${to}:`, error);
+    console.error(`[EmailService] SMTP Error sending email to ${to}:`, {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode
+    });
     throw error;
   }
 };

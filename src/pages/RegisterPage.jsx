@@ -23,15 +23,27 @@ function RegisterPage() {
       setApiError(null)
       setSuccessMessage(null)
 
-      await authService.register(data)
+      const nameParts = (data.name || '').trim().split(/\s+/)
+      const payload = {
+        ...data,
+        role: (data.role || '').toLowerCase().trim(),
+        firstName: nameParts[0] || '',
+        lastName: nameParts.slice(1).join(' ') || '',
+      }
 
-      setSuccessMessage(
+      const res = await authService.register(payload)
+
+      const successNotice =
+        res.data?.message ||
         'Registration successful! Please check your email inbox to verify your account before logging in.'
-      )
+      setSuccessMessage(successNotice)
     } catch (error) {
+      console.error('Registration failed:', error)
       const message =
         error.response?.data?.message ||
-        'Registration failed. Please try again.'
+        error.response?.data?.error ||
+        error.message ||
+        'Registration failed. Please check your network and try again.'
       setApiError(message)
     }
   }
