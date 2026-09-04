@@ -17,10 +17,8 @@ router.route('/')
 router.put('/:id/assign', protect, authorize('vendor'), assignLead);
 router.post('/:id/quote', protect, authorize('vendor'), generateQuote);
 
-router.route('/:id')
-  .put(protect, authorize('vendor', 'team-member', 'admin'), updateLead)
-  .patch(protect, authorize('vendor', 'team-member', 'admin'), updateLead)
-  .delete(protect, authorize('vendor', 'team-member', 'admin'), deleteLead);
+router.put('/:id', protect, authorize('vendor', 'team-member', 'admin'), updateLead);
+router.delete('/:id', protect, authorize('vendor', 'team-member', 'admin'), deleteLead);
 
 export default router;
 
