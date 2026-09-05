@@ -48,30 +48,26 @@ export const register = async (req, res, next) => {
 
     // Create confirmation token and attempt email dispatch in dedicated try/catch
     let emailSent = false;
-    let emailWarning = null;
 
     try {
       const tokenStr = crypto.randomBytes(32).toString('hex');
       await Token.create({ userId: user._id, token: tokenStr, type: 'email-confirmation' });
 
-      // Send email (points to backend server port 5000 where confirmEmail route handles verification)
-      const domain = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 5000}`;
+      // Send email (points to live backend server where confirmEmail route handles verification)
+      const domain = (process.env.SERVER_URL || process.env.BACKEND_URL || 'https://leadms-backend.vercel.app').replace(/\/+$/, '');
       await sendConfirmationEmail(user.email, tokenStr, domain);
       emailSent = true;
     } catch (mailErr) {
       console.error('[authController] Confirmation email could not be sent:', mailErr);
-      emailWarning = mailErr.message || 'SMTP delivery failed';
     }
 
     if (!emailSent) {
-      // Auto-confirm user so they are not locked out if email delivery fails
-      user.isEmailConfirmed = true;
-      await user.save();
+      // Strict enforcement: delete unverified user document if email dispatch fails
+      await Token.deleteMany({ userId: user._id });
+      await User.findByIdAndDelete(user._id);
 
-      return res.status(201).json({
-        success: true,
-        message: 'Account created successfully! You can now log in.',
-        emailWarning
+      return res.status(500).json({
+        message: 'Failed to send confirmation email. Please check your SMTP settings and try again.'
       });
     }
 
@@ -112,7 +108,8 @@ const renderVerificationPage = (success, message) => `
         <div class="icon">${success ? '✓' : '✗'}</div>
         <h1>${success ? 'Verification Successful' : 'Verification Failed'}</h1>
         <p>${message}</p>
-        <button class="btn" onclick="window.close()">Close Window</button>
+        ${success ? `<a class="btn" style="margin-bottom: 10px; display: inline-block;" href="${process.env.CLIENT_URL || 'https://leadms-eta.vercel.app'}/login">Log In to LeadMS</a><br/>` : ''}
+        <button class="btn" style="${success ? 'background: #6c757d;' : ''}" onclick="window.close()">Close Window</button>
         <div class="timer">Closing automatically in <span id="countdown">10</span> seconds...</div>
     </div>
     <script>
