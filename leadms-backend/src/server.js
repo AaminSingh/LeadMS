@@ -16,8 +16,12 @@ import productRoutes from './routes/productRoutes.js';
 import vendorRoutes from './routes/vendorRoutes.js';
 import leadRoutes from './routes/leadRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import { checkEmailConfig } from './services/emailService.js';
 
 const app = express();
+
+// Check email configuration on startup for early diagnostics
+checkEmailConfig();
 
 // Middleware
 app.use(express.json());

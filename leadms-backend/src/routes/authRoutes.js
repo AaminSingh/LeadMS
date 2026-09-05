@@ -2,6 +2,7 @@ import express from 'express';
 const router = express.Router();
 import { register, 
   confirmEmail, 
+  resendConfirmation,
   login, 
   logout, 
   refreshToken, 
@@ -15,6 +16,7 @@ import { protect, authorize  } from '../middlewares/authMiddleware.js';
 // Public routes
 router.post('/register', register);
 router.get('/confirm-email', confirmEmail);
+router.post('/resend-confirmation', resendConfirmation);
 router.post('/login', login);
 router.post('/refresh-token', refreshToken);
 router.post('/forgot-password', forgotPassword);

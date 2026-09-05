@@ -18,6 +18,10 @@ const authService = {
   resetPassword(data) {
     return apiClient.post('/auth/reset-password', data)
   },
+
+  resendConfirmation(email) {
+    return apiClient.post('/auth/resend-confirmation', { email })
+  },
 }
 
 export default authService

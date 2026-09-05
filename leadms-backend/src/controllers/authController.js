@@ -48,6 +48,7 @@ export const register = async (req, res, next) => {
 
     // Create confirmation token and attempt email dispatch in dedicated try/catch
     let emailSent = false;
+    let emailErrorDetail = null;
 
     try {
       const tokenStr = crypto.randomBytes(32).toString('hex');
@@ -58,22 +59,30 @@ export const register = async (req, res, next) => {
       await sendConfirmationEmail(user.email, tokenStr, domain);
       emailSent = true;
     } catch (mailErr) {
-      console.error('[authController] Confirmation email could not be sent:', mailErr);
+      console.error('[authController] Confirmation email could not be sent:', {
+        message: mailErr.message,
+        code: mailErr.code,
+        command: mailErr.command,
+        response: mailErr.response,
+        smtpDetails: mailErr.fullErrorDetails || mailErr.smtpDetails
+      });
+      emailErrorDetail = mailErr.message || 'Email delivery service unavailable';
     }
 
     if (!emailSent) {
-      // Strict enforcement: delete unverified user document if email dispatch fails
-      await Token.deleteMany({ userId: user._id });
-      await User.findByIdAndDelete(user._id);
-
-      return res.status(500).json({
-        message: 'Failed to send confirmation email. Please check your SMTP settings and try again.'
+      // Graceful fallback: user stays created in database, surface resend option on login
+      return res.status(201).json({
+        success: true,
+        emailSent: false,
+        message: 'Account created successfully! We had trouble delivering your confirmation email right now. You can request a new confirmation email from the login page.',
+        emailWarning: emailErrorDetail
       });
     }
 
     return res.status(201).json({
       success: true,
-      message: 'Registration successful. Please check your email to verify your account.'
+      emailSent: true,
+      message: 'Account created successfully! Please check your email inbox to confirm your account before logging in.'
     });
   } catch (error) {
     console.error('[authController] Registration error:', error);
@@ -153,6 +162,70 @@ export const confirmEmail = async (req, res, next) => {
   }
 };
 
+// Rate limiting cache for resend confirmation: email -> timestamp
+const resendRateLimitMap = new Map();
+
+export const resendConfirmation = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: 'Email address is required' });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // 1. Rate limiting check: 60-second cooldown per email
+    const lastSent = resendRateLimitMap.get(normalizedEmail);
+    const now = Date.now();
+    const cooldownMs = 60 * 1000;
+
+    if (lastSent && (now - lastSent < cooldownMs)) {
+      const remainingSec = Math.ceil((cooldownMs - (now - lastSent)) / 1000);
+      return res.status(429).json({
+        message: `Please wait ${remainingSec} seconds before requesting another confirmation email.`
+      });
+    }
+
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user) {
+      // Standard message to avoid email enumeration
+      return res.status(200).json({
+        success: true,
+        message: 'If an account exists with this email, a confirmation link has been sent.'
+      });
+    }
+
+    if (user.isEmailConfirmed) {
+      return res.status(400).json({
+        message: 'This email is already verified. You can log in directly.'
+      });
+    }
+
+    // Delete any stale tokens for this user
+    await Token.deleteMany({ userId: user._id, type: 'email-confirmation' });
+
+    // Generate fresh token
+    const tokenStr = crypto.randomBytes(32).toString('hex');
+    await Token.create({ userId: user._id, token: tokenStr, type: 'email-confirmation' });
+
+    const domain = (process.env.SERVER_URL || process.env.BACKEND_URL || 'https://leadms-backend.vercel.app').replace(/\/+$/, '');
+    await sendConfirmationEmail(user.email, tokenStr, domain);
+
+    // Record rate limit timestamp
+    resendRateLimitMap.set(normalizedEmail, now);
+
+    return res.status(200).json({
+      success: true,
+      message: 'A new confirmation email has been sent! Please check your inbox and spam folder.'
+    });
+  } catch (error) {
+    console.error('[authController:resendConfirmation] Error:', error);
+    return res.status(500).json({
+      message: error.message || 'Failed to resend confirmation email. Please try again later.'
+    });
+  }
+};
+
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -163,7 +236,11 @@ export const login = async (req, res, next) => {
     }
 
     if (!user.isEmailConfirmed) {
-      return res.status(401).json({ message: 'Please confirm your email first' });
+      return res.status(401).json({
+        message: 'Please confirm your email first',
+        needsEmailConfirmation: true,
+        email: user.email
+      });
     }
 
     const isMatch = await user.comparePassword(password);

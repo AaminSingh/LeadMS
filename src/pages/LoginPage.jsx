@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
+import { AlertCircle, Mail, RefreshCw } from 'lucide-react'
+import toast from 'react-hot-toast'
 import useAuthStore from '../store/useAuthStore'
 import authService from '../services/authService'
 
@@ -8,16 +10,51 @@ function LoginPage() {
   const navigate = useNavigate()
   const setCredentials = useAuthStore((state) => state.setCredentials)
   const [apiError, setApiError] = useState(null)
+  const [unconfirmedEmail, setUnconfirmedEmail] = useState(null)
+  const [resendStatus, setResendStatus] = useState(null)
+  const [resendCooldown, setResendCooldown] = useState(0)
 
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm()
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => prev - 1)
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [resendCooldown])
+
+  const handleResendConfirmation = async (targetEmail) => {
+    const emailToUse = (targetEmail || unconfirmedEmail || getValues('email') || '').trim()
+    if (!emailToUse) {
+      toast.error('Please enter your email address to resend confirmation.')
+      return
+    }
+
+    try {
+      setResendStatus({ loading: true, message: null, error: null })
+      const res = await authService.resendConfirmation(emailToUse)
+      const successMsg = res.data?.message || 'Confirmation email sent! Please check your inbox and spam folder.'
+      setResendStatus({ loading: false, message: successMsg, error: null })
+      toast.success('Confirmation email dispatched!')
+      setResendCooldown(60)
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to resend confirmation email. Please check back later.'
+      setResendStatus({ loading: false, message: null, error: msg })
+      toast.error(msg)
+    }
+  }
 
   const onSubmit = async (data) => {
     try {
       setApiError(null)
+      setUnconfirmedEmail(null)
+      setResendStatus(null)
       const response = await authService.login(data)
 
       setCredentials({
@@ -31,6 +68,10 @@ function LoginPage() {
       const message =
         error.response?.data?.message || 'Login failed. Please try again.'
       setApiError(message)
+
+      if (error.response?.data?.needsEmailConfirmation || message.toLowerCase().includes('confirm your email')) {
+        setUnconfirmedEmail(error.response?.data?.email || data.email)
+      }
     }
   }
 
@@ -52,8 +93,49 @@ function LoginPage() {
         </div>
 
         {apiError && (
-          <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
-            {apiError}
+          <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 space-y-2">
+            <div className="flex items-start gap-2.5">
+              <AlertCircle size={18} className="shrink-0 text-red-500 mt-0.5" />
+              <div className="flex-1">
+                <p className="font-semibold">{apiError}</p>
+
+                {(unconfirmedEmail || apiError.toLowerCase().includes('confirm your email')) && (
+                  <div className="mt-3 pt-3 border-t border-red-200/80">
+                    <p className="text-xs text-red-600 mb-2">
+                      Didn't receive the verification email or link expired?
+                    </p>
+                    <button
+                      type="button"
+                      disabled={resendStatus?.loading || resendCooldown > 0}
+                      onClick={() => handleResendConfirmation(unconfirmedEmail)}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                    >
+                      {resendStatus?.loading ? (
+                        <>
+                          <RefreshCw size={13} className="animate-spin" /> Sending link...
+                        </>
+                      ) : resendCooldown > 0 ? (
+                        `Resend link in ${resendCooldown}s`
+                      ) : (
+                        <>
+                          <Mail size={13} /> Resend Confirmation Email
+                        </>
+                      )}
+                    </button>
+                    {resendStatus?.message && (
+                      <p className="mt-2 text-xs font-semibold text-emerald-700">
+                        ✓ {resendStatus.message}
+                      </p>
+                    )}
+                    {resendStatus?.error && (
+                      <p className="mt-2 text-xs text-red-700">
+                        ✗ {resendStatus.error}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 

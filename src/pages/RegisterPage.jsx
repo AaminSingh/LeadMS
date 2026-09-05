@@ -10,7 +10,7 @@ const roles = [
 
 function RegisterPage() {
   const [apiError, setApiError] = useState(null)
-  const [successMessage, setSuccessMessage] = useState(null)
+  const [successInfo, setSuccessInfo] = useState(null)
 
   const {
     register,
@@ -21,7 +21,7 @@ function RegisterPage() {
   const onSubmit = async (data) => {
     try {
       setApiError(null)
-      setSuccessMessage(null)
+      setSuccessInfo(null)
 
       const nameParts = (data.name || '').trim().split(/\s+/)
       const payload = {
@@ -33,10 +33,11 @@ function RegisterPage() {
 
       const res = await authService.register(payload)
 
-      const successNotice =
-        res.data?.message ||
-        'Registration successful! Please check your email inbox to verify your account before logging in.'
-      setSuccessMessage(successNotice)
+      setSuccessInfo({
+        emailSent: res.data?.emailSent !== false,
+        message: res.data?.message || 'Registration successful! Please check your email inbox to verify your account.',
+        warning: res.data?.emailWarning,
+      })
     } catch (error) {
       console.error('Registration failed:', error)
       const message =
@@ -69,19 +70,34 @@ function RegisterPage() {
           </div>
         )}
 
-        {successMessage && (
-          <div className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
-            {successMessage}{' '}
-            <Link
-              to="/login"
-              className="font-medium text-green-800 underline hover:text-green-900"
-            >
-              Go to Login
-            </Link>
+        {successInfo && (
+          <div
+            className={`rounded-xl border p-4 text-sm space-y-3 ${
+              successInfo.emailSent
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
+                : 'border-amber-200 bg-amber-50 text-amber-900'
+            }`}
+          >
+            <div className="font-semibold">
+              {successInfo.emailSent ? '✓ Account Created!' : '✓ Account Created with Notice'}
+            </div>
+            <p className="text-xs leading-relaxed">{successInfo.message}</p>
+            <div className="pt-2 border-t border-black/5 flex items-center justify-between">
+              <Link
+                to="/login"
+                className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs transition-colors ${
+                  successInfo.emailSent
+                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                    : 'bg-amber-600 hover:bg-amber-700 text-white'
+                }`}
+              >
+                Proceed to Login
+              </Link>
+            </div>
           </div>
         )}
 
-        {!successMessage && (
+        {!successInfo && (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
               <label
