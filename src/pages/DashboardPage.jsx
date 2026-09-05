@@ -19,35 +19,147 @@ import {
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import useAuthStore from '../store/useAuthStore'
+import useThemeStore, { THEMES } from '../store/useThemeStore'
 import leadService from '../services/leadService'
+import StatSparkline from '../components/dashboard/StatSparkline'
+import RevenueAnalyticsChart from '../components/dashboard/RevenueAnalyticsChart'
+import PipelineDonutChart from '../components/dashboard/PipelineDonutChart'
+import CountUp from '../components/common/CountUp'
 
 function DashboardPage() {
   const navigate = useNavigate()
   const user = useAuthStore((state) => state.user)
+  const currentTheme = useThemeStore((state) => state.theme)
+
+  const activeTheme = useMemo(() => {
+    return THEMES.find((t) => t.id === currentTheme) || THEMES[0]
+  }, [currentTheme])
 
   const [leads, setLeads] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isSyncing, setIsSyncing] = useState(false)
   const [activeTab, setActiveTab] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedInvoice, setSelectedInvoice] = useState(null)
 
-  const fetchDashboardData = useCallback(async () => {
+  const fetchDashboardData = useCallback(async (showSkeleton = false) => {
     try {
-      setLoading(true)
+      if (showSkeleton) {
+        setLoading(true)
+      } else {
+        setIsSyncing(true)
+      }
       const res = await leadService.getLeads()
       const data = res.data?.leads || res.data || []
       setLeads(data)
     } catch (err) {
       console.error('Dashboard data load error:', err)
-      toast.error('Failed to refresh dashboard metrics.')
+      if (showSkeleton) {
+        toast.error('Failed to refresh dashboard metrics.')
+      }
     } finally {
       setLoading(false)
+      setIsSyncing(false)
     }
   }, [])
 
+  // Initial load + 30s live background polling
   useEffect(() => {
-    fetchDashboardData()
+    fetchDashboardData(true)
+
+    const pollTimer = setInterval(() => {
+      fetchDashboardData(false)
+    }, 30000)
+
+    return () => clearInterval(pollTimer)
   }, [fetchDashboardData])
+
+  // Derive real chronological trend data and sparklines from actual leads
+  const { trendData, sparklines } = useMemo(() => {
+    if (!leads || leads.length === 0) {
+      return {
+        trendData: [],
+        sparklines: {
+          total: [{ val: 0 }, { val: 0 }],
+          outstanding: [{ val: 0 }, { val: 0 }],
+          paid: [{ val: 0 }, { val: 0 }],
+          conversion: [{ val: 0 }, { val: 0 }],
+        },
+      }
+    }
+
+    // Sort leads chronologically
+    const sortedLeads = [...leads].sort(
+      (a, b) => new Date(a.createdAt || a.updatedAt || 0) - new Date(b.createdAt || b.updatedAt || 0)
+    )
+
+    // Build timeline points for RevenueAnalyticsChart
+    const dateMap = new Map()
+    let cumulativeInvoiced = 0
+    let cumulativePaid = 0
+    let cumulativePending = 0
+
+    sortedLeads.forEach((l) => {
+      const d = new Date(l.createdAt || l.updatedAt || Date.now())
+      const dateKey = d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
+      const amount = Number(l.quote?.finalTotal || 0)
+      const isPaid = l.status === 'accepted'
+      const isQuoted = l.status === 'quoted' || (amount > 0 && !isPaid)
+
+      cumulativeInvoiced += amount
+      if (isPaid) {
+        cumulativePaid += amount
+      } else if (isQuoted) {
+        cumulativePending += amount
+      }
+
+      dateMap.set(dateKey, {
+        date: dateKey,
+        invoiced: cumulativeInvoiced,
+        paid: cumulativePaid,
+        pending: cumulativePending,
+      })
+    })
+
+    const trendData = Array.from(dateMap.values())
+
+    // Build sparkline trends
+    let runInv = 0
+    let runPaid = 0
+    let runPend = 0
+    let wonCount = 0
+
+    const totalSpark = []
+    const outSpark = []
+    const paidSpark = []
+    const convSpark = []
+
+    sortedLeads.forEach((l, idx) => {
+      const amt = Number(l.quote?.finalTotal || 0)
+      runInv += amt
+      if (l.status === 'accepted') {
+        runPaid += amt
+        wonCount++
+      } else if (l.status === 'quoted') {
+        runPend += amt
+      }
+
+      totalSpark.push({ val: runInv })
+      outSpark.push({ val: runPend })
+      paidSpark.push({ val: runPaid })
+      convSpark.push({ val: Math.round((wonCount / (idx + 1)) * 100) })
+    })
+
+    return {
+      trendData,
+      sparklines: {
+        total: totalSpark.length > 0 ? totalSpark : [{ val: 0 }, { val: 0 }],
+        outstanding: outSpark.length > 0 ? outSpark : [{ val: 0 }, { val: 0 }],
+        paid: paidSpark.length > 0 ? paidSpark : [{ val: 0 }, { val: 0 }],
+        conversion: convSpark.length > 0 ? convSpark : [{ val: 0 }, { val: 0 }],
+      },
+    }
+  }, [leads])
 
   // Derive transactions and invoices strictly from real leads in the database
   const invoices = useMemo(() => {
@@ -170,13 +282,18 @@ function DashboardPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            <div className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-2.5 py-2 text-[11px] font-semibold text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+              <span className={`h-2 w-2 rounded-full ${isSyncing ? 'bg-amber-400 animate-ping' : 'bg-emerald-500 animate-pulse'}`} />
+              <span>{isSyncing ? 'Syncing...' : 'Live (30s)'}</span>
+            </div>
+
             <button
-              onClick={fetchDashboardData}
-              disabled={loading}
-              className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-gray-700 shadow-2xs hover:bg-gray-50 transition-colors disabled:opacity-50 cursor-pointer"
-              title="Refresh Dashboard"
+              onClick={() => fetchDashboardData(false)}
+              disabled={loading || isSyncing}
+              className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-gray-700 shadow-2xs hover:bg-gray-50 transition-colors disabled:opacity-50 cursor-pointer dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+              title="Refresh Dashboard Data"
             >
-              <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+              <RefreshCw size={15} className={isSyncing ? 'animate-spin' : ''} />
               Sync
             </button>
 
@@ -190,7 +307,7 @@ function DashboardPage() {
 
             <button
               onClick={() => navigate('/app/settings')}
-              className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-gray-700 shadow-2xs hover:bg-gray-50 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-gray-700 shadow-2xs hover:bg-gray-50 transition-colors cursor-pointer dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
               title="Configure Color Theme & UI Density"
             >
               <Sliders size={15} />
@@ -200,101 +317,153 @@ function DashboardPage() {
         </div>
       </div>
 
-      {/* ─── Financial KPI Metric Cards ─── */}
+      {/* ─── Financial KPI Metric Cards with Sparklines ─── */}
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {/* Card 1: Total Invoiced Value */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-xs transition-shadow hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
-              Total Invoices
-            </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-theme-subtle border border-theme text-theme">
-              <FileText size={18} />
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-xs transition-shadow hover:shadow-md flex flex-col justify-between dark:border-gray-800 dark:bg-gray-900/50">
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Total Invoices
+              </span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-theme-subtle border border-theme text-theme">
+                <FileText size={18} />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-2xl font-black text-gray-900 dark:text-white tracking-tight font-mono">
+                <CountUp
+                  start={0}
+                  end={stats.totalInvoicedAmount}
+                  duration={1.0}
+                  decimals={stats.totalInvoicedAmount % 1 !== 0 ? 1 : 0}
+                  formattingFn={(val) => `₹${Number(val).toLocaleString('en-IN')}`}
+                />
+              </div>
+              <div className="mt-1 flex items-center gap-2 text-xs">
+                <span className="inline-flex items-center font-bold text-emerald-600">
+                  <ArrowUpRight size={13} /> {stats.totalInvoicesCount} quotes
+                </span>
+                <span className="text-gray-400">&bull; Pipeline</span>
+              </div>
             </div>
           </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-gray-900 tracking-tight">
-              ₹{stats.totalInvoicedAmount.toLocaleString('en-IN')}
-            </div>
-            <div className="mt-1 flex items-center gap-2 text-xs">
-              <span className="inline-flex items-center font-bold text-emerald-600">
-                <ArrowUpRight size={13} /> {stats.totalInvoicesCount} invoices
-              </span>
-              <span className="text-gray-400">&bull; Generated pipeline</span>
-            </div>
+          <div className="mt-3 pt-2 border-t border-gray-50 dark:border-gray-800/60">
+            <StatSparkline data={sparklines.total} color={activeTheme.primary} />
           </div>
         </div>
 
         {/* Card 2: Outstanding Balance */}
-        <div className="rounded-2xl border border-amber-200/80 bg-amber-50/20 p-5 shadow-xs transition-shadow hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-700">
-              Outstanding Amount
-            </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
-              <Clock size={18} />
+        <div className="rounded-2xl border border-amber-200/80 bg-amber-50/20 p-5 shadow-xs transition-shadow hover:shadow-md flex flex-col justify-between dark:border-amber-900/40 dark:bg-amber-950/10">
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+                Outstanding Amount
+              </span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
+                <Clock size={18} />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-2xl font-black text-gray-900 dark:text-white tracking-tight font-mono">
+                <CountUp
+                  start={0}
+                  end={stats.outstandingAmount}
+                  duration={1.0}
+                  decimals={stats.outstandingAmount % 1 !== 0 ? 1 : 0}
+                  formattingFn={(val) => `₹${Number(val).toLocaleString('en-IN')}`}
+                />
+              </div>
+              <div className="mt-1 flex items-center gap-2 text-xs">
+                <span className="inline-flex items-center font-bold text-amber-600">
+                  {stats.outstandingCount} pending
+                </span>
+                <span className="text-gray-400">&bull; Awaiting settlement</span>
+              </div>
             </div>
           </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-gray-900 tracking-tight">
-              ₹{stats.outstandingAmount.toLocaleString('en-IN')}
-            </div>
-            <div className="mt-1 flex items-center gap-2 text-xs">
-              <span className="inline-flex items-center font-bold text-amber-600">
-                {stats.outstandingCount} pending/overdue
-              </span>
-              <span className="text-gray-400">&bull; Awaiting settlement</span>
-            </div>
+          <div className="mt-3 pt-2 border-t border-amber-100/60 dark:border-amber-900/30">
+            <StatSparkline data={sparklines.outstanding} color="#f59e0b" />
           </div>
         </div>
 
         {/* Card 3: Paid Revenue */}
-        <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/20 p-5 shadow-xs transition-shadow hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
-              Paid & Realized
-            </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
-              <CheckCircle2 size={18} />
+        <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/20 p-5 shadow-xs transition-shadow hover:shadow-md flex flex-col justify-between dark:border-emerald-900/40 dark:bg-emerald-950/10">
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                Paid & Realized
+              </span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300">
+                <CheckCircle2 size={18} />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-2xl font-black text-gray-900 dark:text-white tracking-tight font-mono">
+                <CountUp
+                  start={0}
+                  end={stats.paidAmount}
+                  duration={1.0}
+                  decimals={stats.paidAmount % 1 !== 0 ? 1 : 0}
+                  formattingFn={(val) => `₹${Number(val).toLocaleString('en-IN')}`}
+                />
+              </div>
+              <div className="mt-1 flex items-center gap-2 text-xs">
+                <span className="inline-flex items-center font-bold text-emerald-600">
+                  {stats.paidCount} settled
+                </span>
+                <span className="text-gray-400">&bull; Closed won</span>
+              </div>
             </div>
           </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-gray-900 tracking-tight">
-              ₹{stats.paidAmount.toLocaleString('en-IN')}
-            </div>
-            <div className="mt-1 flex items-center gap-2 text-xs">
-              <span className="inline-flex items-center font-bold text-emerald-600">
-                {stats.paidCount} settlements
-              </span>
-              <span className="text-gray-400">&bull; Closed won</span>
-            </div>
+          <div className="mt-3 pt-2 border-t border-emerald-100/60 dark:border-emerald-900/30">
+            <StatSparkline data={sparklines.paid} color="#10b981" />
           </div>
         </div>
 
         {/* Card 4: Conversion Rate */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-xs transition-shadow hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
-              Lead Conversion
-            </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-purple-700 border border-purple-200">
-              <TrendingUp size={18} />
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-xs transition-shadow hover:shadow-md flex flex-col justify-between dark:border-gray-800 dark:bg-gray-900/50">
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                Win Rate
+              </span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/50 dark:border-purple-800 dark:text-purple-300">
+                <TrendingUp size={18} />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-2xl font-black text-gray-900 dark:text-white tracking-tight font-mono">
+                <CountUp
+                  start={0}
+                  end={stats.conversionRate}
+                  duration={0.9}
+                  suffix="%"
+                />
+              </div>
+              <div className="mt-1 flex items-center gap-2 text-xs">
+                <span className="inline-flex items-center font-bold text-purple-600">
+                  {leads.length > 0 ? `${stats.paidCount}/${leads.length} won` : '0 won'}
+                </span>
+                <span className="text-gray-400">&bull; Conversion</span>
+              </div>
             </div>
           </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-gray-900 tracking-tight">
-              {stats.conversionRate}%
-            </div>
-            {/* Progress Bar */}
-            <div className="mt-2.5 h-2 w-full rounded-full bg-gray-100 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 transition-all duration-500"
-                style={{ width: `${stats.conversionRate}%` }}
-              />
-            </div>
+          <div className="mt-3 pt-2 border-t border-gray-50 dark:border-gray-800/60">
+            <StatSparkline data={sparklines.conversion} color="#8b5cf6" />
           </div>
         </div>
       </div>
+
+      {/* ─── Main Revenue & Pipeline Analytics Chart (Live Animated AreaChart) ─── */}
+      <RevenueAnalyticsChart
+        data={trendData}
+        loading={loading}
+        theme={currentTheme}
+        totalInvoiced={stats.totalInvoicedAmount}
+        totalPaid={stats.paidAmount}
+        onNewLead={() => navigate('/app/leads')}
+      />
 
       {/* ─── Recent Invoices & Transactions Table ─── */}
       <div className="rounded-2xl border border-gray-200 bg-white shadow-xs overflow-hidden">
@@ -428,58 +597,11 @@ function DashboardPage() {
         </div>
       </div>
 
-      {/* ─── Sales Pipeline Stage Breakdown & Quick Shortcuts ─── */}
+      {/* ─── Sales Pipeline Breakdown Donut Chart & Quick Shortcuts ─── */}
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Stage breakdown (2 cols) */}
-        <div className="lg:col-span-2 rounded-2xl border border-gray-200 bg-white p-6 shadow-xs">
-          <h3 className="text-base font-bold text-gray-900 mb-1">
-            Sales Pipeline Breakdown
-          </h3>
-          <p className="text-xs text-gray-500 mb-6">
-            Current distribution of inquiries across lifecycle stages.
-          </p>
-
-          <div className="grid gap-4 sm:grid-cols-4">
-            {[
-              {
-                stage: 'New Leads',
-                count: leads.filter((l) => l.status === 'new').length || 2,
-                color: 'bg-blue-500',
-                text: 'text-blue-700',
-                bg: 'bg-blue-50',
-              },
-              {
-                stage: 'Contacted',
-                count: leads.filter((l) => l.status === 'contacted').length || 1,
-                color: 'bg-amber-500',
-                text: 'text-amber-700',
-                bg: 'bg-amber-50',
-              },
-              {
-                stage: 'Quoted',
-                count: leads.filter((l) => l.status === 'quoted').length || 3,
-                color: 'bg-purple-500',
-                text: 'text-purple-700',
-                bg: 'bg-purple-50',
-              },
-              {
-                stage: 'Accepted',
-                count: leads.filter((l) => l.status === 'accepted').length || 2,
-                color: 'bg-emerald-500',
-                text: 'text-emerald-700',
-                bg: 'bg-emerald-50',
-              },
-            ].map((item) => (
-              <div
-                key={item.stage}
-                className={`rounded-xl border border-gray-100 ${item.bg} p-4`}
-              >
-                <div className={`h-2 w-8 rounded-full ${item.color} mb-2`} />
-                <div className="text-2xl font-black text-gray-900">{item.count}</div>
-                <div className={`text-xs font-semibold ${item.text}`}>{item.stage}</div>
-              </div>
-            ))}
-          </div>
+        {/* Pipeline Donut Chart (2 cols) */}
+        <div className="lg:col-span-2">
+          <PipelineDonutChart leads={leads} isDark={currentTheme === 'midnight'} />
         </div>
 
         {/* Quick workspace shortcuts (1 col) */}
