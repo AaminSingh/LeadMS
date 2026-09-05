@@ -23,9 +23,53 @@ const app = express();
 // Check email configuration on startup for early diagnostics
 checkEmailConfig();
 
+// Allowed Origins for CORS (Local dev, production, and Vercel preview environments)
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3000',
+  'https://lead-ms-kappa.vercel.app',
+  'https://leadms-eta.vercel.app',
+  'https://leadms.vercel.app',
+].filter(Boolean);
+
+const isOriginAllowed = (origin) => {
+  if (!origin) return true; // Allow mobile apps, curl, Postman, server-to-server
+  if (allowedOrigins.includes(origin)) return true;
+  // Dynamically allow any Vercel deployment preview / production subdomains
+  if (/^https:\/\/([a-zA-Z0-9_-]+\.)*vercel\.app$/.test(origin)) return true;
+  return false;
+};
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (isOriginAllowed(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`[CORS Blocked] Origin not allowed: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  optionsSuccessStatus: 200,
+};
+
+// CORS middleware MUST be registered before any routes or body parsers
+app.use(cors(corsOptions));
+
+// Explicit preflight handler to guarantee 200/204 response on any OPTIONS requests
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
+
 // Middleware
 app.use(express.json());
-app.use(cors());
 
 // Routes with /api prefix
 app.use('/api/auth', authRoutes);
