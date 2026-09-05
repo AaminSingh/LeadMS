@@ -6,7 +6,7 @@ const cleanBase = rawBase.replace(/\/+$/, '');
 const baseURL = cleanBase.endsWith('/api') ? cleanBase : `${cleanBase}/api`;
 
 const apiClient = axios.create({
-  baseURL,
+  baseURL: 'https://your-backend-url.vercel.app/api',
   headers: {
     'Content-Type': 'application/json',
   },
