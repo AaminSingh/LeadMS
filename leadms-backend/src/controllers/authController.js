@@ -55,7 +55,7 @@ export const register = async (req, res, next) => {
       await Token.create({ userId: user._id, token: tokenStr, type: 'email-confirmation' });
 
       // Send email (points to live backend server where confirmEmail route handles verification)
-      const domain = (process.env.SERVER_URL || process.env.BACKEND_URL || 'https://leadms-backend.vercel.app').replace(/\/+$/, '');
+      const domain = (process.env.SERVER_URL || process.env.BACKEND_URL || 'https://leadms-backend-theta.vercel.app').replace(/\/+$/, '');
       await sendConfirmationEmail(user.email, tokenStr, domain);
       emailSent = true;
     } catch (mailErr) {
@@ -208,7 +208,7 @@ export const resendConfirmation = async (req, res, next) => {
     const tokenStr = crypto.randomBytes(32).toString('hex');
     await Token.create({ userId: user._id, token: tokenStr, type: 'email-confirmation' });
 
-    const domain = (process.env.SERVER_URL || process.env.BACKEND_URL || 'https://leadms-backend.vercel.app').replace(/\/+$/, '');
+    const domain = (process.env.SERVER_URL || process.env.BACKEND_URL || 'https://leadms-backend-theta.vercel.app').replace(/\/+$/, '');
     await sendConfirmationEmail(user.email, tokenStr, domain);
 
     // Record rate limit timestamp

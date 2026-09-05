@@ -1,12 +1,12 @@
 import axios from 'axios'
 import useAuthStore from '../store/useAuthStore'
 
-const rawBase = import.meta.env.VITE_API_BASE_URL || 'https://leadms-backend.vercel.app/api';
+const rawBase = import.meta.env.VITE_API_BASE_URL || 'https://leadms-backend-theta.vercel.app/api';
 const cleanBase = rawBase.replace(/\/+$/, '');
 const baseURL = cleanBase.endsWith('/api') ? cleanBase : `${cleanBase}/api`;
 
 const apiClient = axios.create({
-  baseURL: 'https://leadms-backend.vercel.app/api',
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
