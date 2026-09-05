@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { Plus, FileText, RefreshCw, Pencil, Trash2, Check, X, PhoneCall, ChevronDown } from 'lucide-react'
+import { Plus, FileText, RefreshCw, Pencil, Trash2, Check, ChevronDown } from 'lucide-react'
 import toast from 'react-hot-toast'
 import leadService from '../services/leadService'
 import Badge from '../components/common/Badge'
@@ -258,17 +258,21 @@ function LeadsPage() {
                               setOpenStatusMenuId(openStatusMenuId === leadId ? null : leadId)
                             }
                             disabled={updatingStatusId === leadId}
-                            className="group inline-flex items-center gap-1.5 rounded-full transition-all focus:outline-hidden cursor-pointer"
+                            className="group inline-flex items-center gap-1.5 rounded-full transition-all focus:outline-hidden cursor-pointer disabled:opacity-60"
                             title="Click to change status"
                           >
                             <Badge status={lead.status} />
                             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors group-hover:bg-gray-200 group-hover:text-gray-700">
-                              <ChevronDown
-                                size={11}
-                                className={`transition-transform duration-150 ${
-                                  openStatusMenuId === leadId ? 'rotate-180 text-gray-700' : ''
-                                }`}
-                              />
+                              {updatingStatusId === leadId ? (
+                                <RefreshCw size={11} className="animate-spin text-gray-600" />
+                              ) : (
+                                <ChevronDown
+                                  size={11}
+                                  className={`transition-transform duration-150 ${
+                                    openStatusMenuId === leadId ? 'rotate-180 text-gray-700' : ''
+                                  }`}
+                                />
+                              )}
                             </span>
                           </button>
 
@@ -317,88 +321,7 @@ function LeadsPage() {
                       </td>
 
                       <td className="px-6 py-4 text-right">
-                        <div className="inline-flex items-center justify-end gap-1.5 flex-wrap">
-                          {/* Quick Action Buttons for New */}
-                          {lead.status === 'new' && (
-                            <button
-                              onClick={() => handleStatusChange(lead, 'contacted')}
-                              disabled={updatingStatusId === leadId}
-                              className="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs font-semibold text-amber-700 transition-colors hover:bg-amber-100 disabled:opacity-50 cursor-pointer"
-                              title="Mark as Contacted"
-                            >
-                              {updatingStatusId === leadId ? (
-                                <RefreshCw size={12} className="animate-spin" />
-                              ) : (
-                                <PhoneCall size={12} />
-                              )}
-                              Mark Contacted
-                            </button>
-                          )}
-
-                          {/* Quick Action Buttons for Quoted */}
-                          {lead.status === 'quoted' && (
-                            <>
-                              <button
-                                onClick={() => handleStatusChange(lead, 'accepted')}
-                                disabled={updatingStatusId === leadId}
-                                className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:opacity-50 cursor-pointer"
-                                title="Accept Quote"
-                              >
-                                {updatingStatusId === leadId ? (
-                                  <RefreshCw size={12} className="animate-spin" />
-                                ) : (
-                                  <Check size={12} />
-                                )}
-                                Accept
-                              </button>
-                              <button
-                                onClick={() => handleStatusChange(lead, 'rejected')}
-                                disabled={updatingStatusId === leadId}
-                                className="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-semibold text-rose-700 transition-colors hover:bg-rose-100 disabled:opacity-50 cursor-pointer"
-                                title="Reject Quote"
-                              >
-                                {updatingStatusId === leadId ? (
-                                  <RefreshCw size={12} className="animate-spin" />
-                                ) : (
-                                  <X size={12} />
-                                )}
-                                Reject
-                              </button>
-                            </>
-                          )}
-
-                          {/* Quick Action Buttons for Contacted */}
-                          {lead.status === 'contacted' && (
-                            <>
-                              <button
-                                onClick={() => handleStatusChange(lead, 'accepted')}
-                                disabled={updatingStatusId === leadId}
-                                className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:opacity-50 cursor-pointer"
-                                title="Accept Lead"
-                              >
-                                {updatingStatusId === leadId ? (
-                                  <RefreshCw size={12} className="animate-spin" />
-                                ) : (
-                                  <Check size={12} />
-                                )}
-                                Accept
-                              </button>
-                              <button
-                                onClick={() => handleStatusChange(lead, 'rejected')}
-                                disabled={updatingStatusId === leadId}
-                                className="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-semibold text-rose-700 transition-colors hover:bg-rose-100 disabled:opacity-50 cursor-pointer"
-                                title="Reject Lead"
-                              >
-                                {updatingStatusId === leadId ? (
-                                  <RefreshCw size={12} className="animate-spin" />
-                                ) : (
-                                  <X size={12} />
-                                )}
-                                Reject
-                              </button>
-                            </>
-                          )}
-
+                        <div className="inline-flex items-center justify-end gap-2">
                           <button
                             onClick={() => handleOpenQuoteModal(lead)}
                             className="inline-flex items-center gap-1.5 rounded-lg border border-purple-200 bg-purple-50 px-2.5 py-1.5 text-xs font-semibold text-purple-700 transition-colors hover:bg-purple-100 cursor-pointer"
