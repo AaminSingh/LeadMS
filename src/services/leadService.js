@@ -22,20 +22,30 @@ const leadService = {
   },
 
   updateLead(id, data) {
-    const name = data.customerName || data.clientName
-    const email = data.customerEmail || data.email
-    const phone = data.customerPhone || data.phone
+    const payload = {}
+    const name = data.customerName !== undefined ? data.customerName : data.clientName
+    if (name !== undefined) {
+      payload.customerName = name
+      payload.clientName = name
+    }
+    const email = data.customerEmail !== undefined ? data.customerEmail : data.email
+    if (email !== undefined) {
+      payload.customerEmail = email
+      payload.email = email
+    }
+    const phone = data.customerPhone !== undefined ? data.customerPhone : data.phone
+    if (phone !== undefined) {
+      payload.customerPhone = phone
+      payload.phone = phone
+    }
+    if (data.requirement !== undefined) {
+      payload.requirement = data.requirement
+    }
+    if (data.status !== undefined) {
+      payload.status = data.status
+    }
 
-    return apiClient.put('/leads/' + id, {
-      customerName: name,
-      clientName: name,
-      customerEmail: email,
-      email: email,
-      customerPhone: phone,
-      phone: phone,
-      requirement: data.requirement,
-      ...(data.status ? { status: data.status } : {}),
-    })
+    return apiClient.put('/leads/' + id, payload)
   },
 
   deleteLead(id) {

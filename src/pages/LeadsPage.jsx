@@ -1,10 +1,18 @@
 import { useEffect, useState, useCallback } from 'react'
-import { Plus, FileText, RefreshCw, Pencil, Trash2 } from 'lucide-react'
+import { Plus, FileText, RefreshCw, Pencil, Trash2, Check, X, PhoneCall, ChevronDown } from 'lucide-react'
 import toast from 'react-hot-toast'
 import leadService from '../services/leadService'
 import Badge from '../components/common/Badge'
 import LeadFormModal from '../components/leads/LeadFormModal'
 import QuoteBuilderModal from '../components/leads/QuoteBuilderModal'
+
+const STATUS_OPTIONS = [
+  { value: 'new', label: 'New', dotColor: 'bg-cyan-500' },
+  { value: 'contacted', label: 'Contacted', dotColor: 'bg-amber-500' },
+  { value: 'quoted', label: 'Quoted', dotColor: 'bg-purple-500' },
+  { value: 'accepted', label: 'Accepted', dotColor: 'bg-emerald-500' },
+  { value: 'rejected', label: 'Rejected', dotColor: 'bg-rose-500' },
+]
 
 function LeadsPage() {
   const [leads, setLeads] = useState([])
@@ -13,6 +21,8 @@ function LeadsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingLead, setEditingLead] = useState(null)
   const [deletingId, setDeletingId] = useState(null)
+  const [updatingStatusId, setUpdatingStatusId] = useState(null)
+  const [openStatusMenuId, setOpenStatusMenuId] = useState(null)
 
   // Quote builder modal state
   const [quoteLeadItem, setQuoteLeadItem] = useState(null)
@@ -77,6 +87,65 @@ function LeadsPage() {
 
   const handleCloseQuoteModal = () => {
     setQuoteLeadItem(null)
+  }
+
+  // Close status dropdown menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('[data-status-dropdown]')) {
+        setOpenStatusMenuId(null)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Interactive status change handler
+  const handleStatusChange = async (lead, newStatus) => {
+    const leadId = lead._id || lead.id
+    if (!leadId || lead.status === newStatus) return
+
+    const prevStatus = lead.status
+    const name = lead.clientName || lead.customerName || 'Lead'
+    const statusLabel =
+      newStatus.charAt(0).toUpperCase() + newStatus.slice(1)
+
+    // 1. Instant local state update for snappy UI feedback
+    setLeads((prevLeads) =>
+      prevLeads.map((item) =>
+        (item._id || item.id) === leadId ? { ...item, status: newStatus } : item
+      )
+    )
+    setUpdatingStatusId(leadId)
+    setOpenStatusMenuId(null)
+
+    // 2. Call existing API endpoint via leadService.updateLead(id, { status })
+    try {
+      const res = await leadService.updateLead(leadId, { status: newStatus })
+      toast.success(`Marked "${name}" as ${statusLabel}!`)
+
+      // Sync with response data if returned
+      if (res?.data) {
+        setLeads((prevLeads) =>
+          prevLeads.map((item) =>
+            (item._id || item.id) === leadId
+              ? { ...item, ...res.data, status: res.data.status || newStatus }
+              : item
+          )
+        )
+      }
+    } catch (err) {
+      console.error('Failed to update lead status:', err)
+      // Rollback to previous status on failure
+      setLeads((prevLeads) =>
+        prevLeads.map((item) =>
+          (item._id || item.id) === leadId ? { ...item, status: prevStatus } : item
+        )
+      )
+      toast.error(err.response?.data?.message || 'Failed to update lead status.')
+    } finally {
+      setUpdatingStatusId(null)
+    }
   }
 
   return (
@@ -182,7 +251,64 @@ function LeadsPage() {
                       </td>
 
                       <td className="px-6 py-4">
-                        <Badge status={lead.status} />
+                        <div className="relative inline-block text-left" data-status-dropdown>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setOpenStatusMenuId(openStatusMenuId === leadId ? null : leadId)
+                            }
+                            disabled={updatingStatusId === leadId}
+                            className="group inline-flex items-center gap-1.5 rounded-full transition-all focus:outline-hidden cursor-pointer"
+                            title="Click to change status"
+                          >
+                            <Badge status={lead.status} />
+                            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors group-hover:bg-gray-200 group-hover:text-gray-700">
+                              <ChevronDown
+                                size={11}
+                                className={`transition-transform duration-150 ${
+                                  openStatusMenuId === leadId ? 'rotate-180 text-gray-700' : ''
+                                }`}
+                              />
+                            </span>
+                          </button>
+
+                          {/* Dropdown Menu for Status */}
+                          {openStatusMenuId === leadId && (
+                            <div className="absolute left-0 z-30 mt-1.5 w-44 origin-top-left rounded-xl border border-gray-200 bg-white p-1.5 shadow-lg ring-1 ring-black/5">
+                              <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                                Change Status
+                              </div>
+                              <div className="space-y-0.5">
+                                {STATUS_OPTIONS.map((opt) => {
+                                  const isCurrent =
+                                    String(lead.status).toLowerCase() === opt.value
+                                  return (
+                                    <button
+                                      key={opt.value}
+                                      type="button"
+                                      onClick={() => handleStatusChange(lead, opt.value)}
+                                      disabled={isCurrent || updatingStatusId === leadId}
+                                      className={`flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
+                                        isCurrent
+                                          ? 'bg-gray-100 text-gray-900 font-semibold cursor-default'
+                                          : 'text-gray-700 hover:bg-gray-50'
+                                      }`}
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        <span
+                                          className={`inline-block h-2 w-2 rounded-full ${opt.dotColor}`}
+                                        />
+                                        <span>{opt.label}</span>
+                                      </div>
+                                      {isCurrent && <Check size={12} className="text-gray-600" />}
+                                    </button>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
                         {lead.quote?.finalTotal ? (
                           <div className="mt-1 text-xs font-bold text-gray-900">
                             ₹{Number(lead.quote.finalTotal).toLocaleString('en-IN')}
@@ -191,14 +317,95 @@ function LeadsPage() {
                       </td>
 
                       <td className="px-6 py-4 text-right">
-                        <div className="inline-flex items-center justify-end gap-2">
+                        <div className="inline-flex items-center justify-end gap-1.5 flex-wrap">
+                          {/* Quick Action Buttons for New */}
+                          {lead.status === 'new' && (
+                            <button
+                              onClick={() => handleStatusChange(lead, 'contacted')}
+                              disabled={updatingStatusId === leadId}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs font-semibold text-amber-700 transition-colors hover:bg-amber-100 disabled:opacity-50 cursor-pointer"
+                              title="Mark as Contacted"
+                            >
+                              {updatingStatusId === leadId ? (
+                                <RefreshCw size={12} className="animate-spin" />
+                              ) : (
+                                <PhoneCall size={12} />
+                              )}
+                              Mark Contacted
+                            </button>
+                          )}
+
+                          {/* Quick Action Buttons for Quoted */}
+                          {lead.status === 'quoted' && (
+                            <>
+                              <button
+                                onClick={() => handleStatusChange(lead, 'accepted')}
+                                disabled={updatingStatusId === leadId}
+                                className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:opacity-50 cursor-pointer"
+                                title="Accept Quote"
+                              >
+                                {updatingStatusId === leadId ? (
+                                  <RefreshCw size={12} className="animate-spin" />
+                                ) : (
+                                  <Check size={12} />
+                                )}
+                                Accept
+                              </button>
+                              <button
+                                onClick={() => handleStatusChange(lead, 'rejected')}
+                                disabled={updatingStatusId === leadId}
+                                className="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-semibold text-rose-700 transition-colors hover:bg-rose-100 disabled:opacity-50 cursor-pointer"
+                                title="Reject Quote"
+                              >
+                                {updatingStatusId === leadId ? (
+                                  <RefreshCw size={12} className="animate-spin" />
+                                ) : (
+                                  <X size={12} />
+                                )}
+                                Reject
+                              </button>
+                            </>
+                          )}
+
+                          {/* Quick Action Buttons for Contacted */}
+                          {lead.status === 'contacted' && (
+                            <>
+                              <button
+                                onClick={() => handleStatusChange(lead, 'accepted')}
+                                disabled={updatingStatusId === leadId}
+                                className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:opacity-50 cursor-pointer"
+                                title="Accept Lead"
+                              >
+                                {updatingStatusId === leadId ? (
+                                  <RefreshCw size={12} className="animate-spin" />
+                                ) : (
+                                  <Check size={12} />
+                                )}
+                                Accept
+                              </button>
+                              <button
+                                onClick={() => handleStatusChange(lead, 'rejected')}
+                                disabled={updatingStatusId === leadId}
+                                className="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-semibold text-rose-700 transition-colors hover:bg-rose-100 disabled:opacity-50 cursor-pointer"
+                                title="Reject Lead"
+                              >
+                                {updatingStatusId === leadId ? (
+                                  <RefreshCw size={12} className="animate-spin" />
+                                ) : (
+                                  <X size={12} />
+                                )}
+                                Reject
+                              </button>
+                            </>
+                          )}
+
                           <button
                             onClick={() => handleOpenQuoteModal(lead)}
                             className="inline-flex items-center gap-1.5 rounded-lg border border-purple-200 bg-purple-50 px-2.5 py-1.5 text-xs font-semibold text-purple-700 transition-colors hover:bg-purple-100 cursor-pointer"
-                            title="Generate Quote"
+                            title={lead.quote?.finalTotal ? 'Edit Quote' : 'Generate Quote'}
                           >
                             <FileText size={13} />
-                            Generate Quote
+                            {lead.quote?.finalTotal ? 'Edit Quote' : 'Generate Quote'}
                           </button>
                           <button
                             onClick={() => handleOpenEditModal(lead)}
